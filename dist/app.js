@@ -572,53 +572,65 @@ const virtualDom_jsRemoveEventListener = (eventName, handler, node) => {
     node.squarepantsEventHandlers[eventName] = undefined;
 }
 
-const virtualDom_setLocalStorage = (key, value) => () => {
-    window.localStorage[key] = value;
+const virtualDom_setLocalStorage = (effects, key, value) => {
+    effects.push(() => {
+        window.localStorage[key] = value;
+    });
+    return [ null, effects ];
 }
 
-const virtualDom_getLocalStorage = (key, msgConstructor) => () => {
-    dispatch(['$Ok', msgConstructor(window.localStorage[key] || "")]);
+const virtualDom_getLocalStorage = (effects, key, msgConstructor) => {
+    effects.push(() => {
+        dispatch(['$Ok', msgConstructor(window.localStorage[key] || "")]);
+    });
+    return [ null, effects ];
 }
 
-const virtualDom_setViewportOf = (id, top, left) => () => {
-    const e = document.getElementById(id);
-    if (!e) {
-        console.error('could not find element #' + id);
-        return
-    }
+const virtualDom_setViewportOf = (effects, id, top, left) => {
+    effects.push(() => {
+        const e = document.getElementById(id);
+        if (!e) {
+            console.error('could not find element #' + id);
+            return
+        }
 
-    e.scrollTop = top;
-    e.scrollLeft = left;
+        e.scrollTop = top;
+        e.scrollLeft = left;
+    });
+    return [ null, effects ];
 }
 
+const virtualDom_drawCanvas = (effects, canvasId, shaderFn) => {
+    effects.push(() => {
 
-const virtualDom_drawCanvas = (canvasId, shaderFn) => () => {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) {
+            console.error('could not find canvas', canvasId);
+            return
+        }
 
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) {
-        console.error('could not find canvas', canvasId);
-        return
-    }
+        const w = canvas.width;
+        const h = canvas.height;
 
-    const w = canvas.width;
-    const h = canvas.height;
+        const ctx = canvas.getContext('2d');
+        const imageData = ctx.createImageData(w, h);
 
-    const ctx = canvas.getContext('2d');
-    const imageData = ctx.createImageData(w, h);
+        for (let x = 0; x < w; x++) for (let y = 0; y < h; y++) {
 
-    for (let x = 0; x < w; x++) for (let y = 0; y < h; y++) {
+            const frag = shaderFn(x / (w - 1), 1 - y / (h - 1));
 
-        const frag = shaderFn(x / (w - 1), 1 - y / (h - 1));
+            let j = (x + y * w) * 4;
+            imageData.data[j + 0] = frag.r * 255;
+            imageData.data[j + 1] = frag.g * 255;
+            imageData.data[j + 2] = frag.b * 255;
+            imageData.data[j + 3] = 255;
+        }
 
-        let j = (x + y * w) * 4;
-        imageData.data[j + 0] = frag.r * 255;
-        imageData.data[j + 1] = frag.g * 255;
-        imageData.data[j + 2] = frag.b * 255;
-        imageData.data[j + 3] = 255;
-    }
-
-    ctx.putImageData(imageData, 0, 0);
-};const c0$Core$Cons = (($1, $2) => ([
+        ctx.putImageData(imageData, 0, 0);
+    });
+    return [ null, effects ];
+}
+const c0$Core$Cons = (($1, $2) => ([
   "$Cons",
   $1,
   $2,
@@ -792,18 +804,32 @@ const u0$Picker$OnToggleEdit = (($1) => ([
   $1,
 ]));
 
-const u0$Totals$OnCleanUpMode = (($1) => ([
-  "$OnCleanUpMode",
+const u0$Totals$ExpansionItem = (($1) => ([
+  "$ExpansionItem",
   $1,
 ]));
 
-const u0$Totals$OnClearAll = ([
-  "$OnClearAll",
+const u0$Totals$ExpansionNone = ([
+  "$ExpansionNone",
 ]);
 
-const u0$Totals$OnQuantityFocus = (($1) => ([
-  "$OnQuantityFocus",
+const u0$Totals$ExpansionTargets = ([
+  "$ExpansionTargets",
+]);
+
+const u0$Totals$OnDeleteAll = ([
+  "$OnDeleteAll",
+]);
+
+const u0$Totals$OnDeleteAllMode = (($1) => ([
+  "$OnDeleteAllMode",
   $1,
+]));
+
+const u0$Totals$OnGetTargetResponse = (($1, $2) => ([
+  "$OnGetTargetResponse",
+  $1,
+  $2,
 ]));
 
 const u0$Totals$OnQuantityInput = (($1, $2) => ([
@@ -815,6 +841,17 @@ const u0$Totals$OnQuantityInput = (($1, $2) => ([
 const u0$Totals$OnRemove = (($1) => ([
   "$OnRemove",
   $1,
+]));
+
+const u0$Totals$OnToggleExpansion = (($1) => ([
+  "$OnToggleExpansion",
+  $1,
+]));
+
+const u0$Totals$OnUserSetsTarget = (($1, $2) => ([
+  "$OnUserSetsTarget",
+  $1,
+  $2,
 ]));
 
 const c0$List$for = (($init, $aList, $function) => {
@@ -1129,6 +1166,12 @@ const i1$Html$class = (($0) => {
   return (i1$VirtualDom$CssClass)($0);
 });
 
+const i1$Html$classIf = (($p, $content) => {
+  return ($p
+    ? (i1$Html$class)($content)
+    : i1$VirtualDom$Void);
+});
+
 const i1$Html$disabled = (($flag) => {
   return ($flag
     ? (i1$VirtualDom$DomProperty)("disabled", "true")
@@ -1137,6 +1180,10 @@ const i1$Html$disabled = (($flag) => {
 
 const i1$Html$div = (($0, $1) => {
   return (i1$VirtualDom$ElementNode)("div", $0, $1);
+});
+
+const i1$Html$h1 = (($0, $1) => {
+  return (i1$VirtualDom$ElementNode)("h1", $0, $1);
 });
 
 const i1$Html$img = (($0) => {
@@ -1185,9 +1232,9 @@ const i1$Html$value = (($0) => {
   return (i1$VirtualDom$DomProperty)("value", $0);
 });
 
-const i1$Html$viewIf = (($p, $content) => {
+const i1$Html$viewIf = (($p, $view) => {
   return ($p
-    ? $content
+    ? ($view)(null)
     : i1$Html$none);
 });
 
@@ -1485,12 +1532,31 @@ const u0$Item$textToItems = (($0) => {
   }));
 });
 
-const u0$Picker$init = ({
-  editMode: false,
-  search: "",
+const u0$Totals$kCalTargetName = "kCalTarget";
+
+const u0$Totals$proTargetName = "proTarget";
+
+const u0$Totals$init = (($eff, $embed, $items) => {
+  ((__re__ = (virtualDom_getLocalStorage)($eff, u0$Totals$kCalTargetName, (($0) => {
+    return ($embed)((u0$Totals$OnGetTargetResponse)(u0$Totals$kCalTargetName, $0));
+  }))), ($eff = (__re__)[1]), (__re__)[0]);
+  ((__re__ = (virtualDom_getLocalStorage)($eff, u0$Totals$proTargetName, (($0) => {
+    return ($embed)((u0$Totals$OnGetTargetResponse)(u0$Totals$proTargetName, $0));
+  }))), ($eff = (__re__)[1]), (__re__)[0]);
+  return ([
+    ({
+      deleteAllMode: false,
+      expansion: u0$Totals$ExpansionNone,
+      inputNumberAsText: "",
+      items: $items,
+      kCalTarget: 0,
+      proTarget: 0,
+    }),
+    $eff,
+  ]);
 });
 
-const u0$App$init = (($flags, $effects) => {
+const u0$App$init = (($flags, $eff) => {
   const $foods = ((sp_equal)($flags.foods, "")
     ? u0$Food$defaults
     : (u0$Food$textToFoods)($flags.foods));
@@ -1501,9 +1567,9 @@ const u0$App$init = (($flags, $effects) => {
     ({
       foods: $foods,
       items: $items,
-      page: (u0$App$PagePicker)(u0$Picker$init),
+      page: (u0$App$PageTotals)(((__re__ = (u0$Totals$init)($eff, u0$App$OnTotalsMsg, $items)), ($eff = (__re__)[1]), (__re__)[0])),
     }),
-    $effects,
+    $eff,
   ]);
 });
 
@@ -1513,13 +1579,7 @@ const u0$Item$itemsToText = (($0) => {
   })));
 });
 
-const u0$Totals$init = ({
-  cleanUpMode: false,
-  expandedItemIndex: -(1),
-  inputNumberAsText: "",
-});
-
-const u0$App$updateOnFoodPicked = (($effects, $food, $model) => {
+const u0$App$updateOnFoodPicked = (($eff, $food, $model) => {
   const $item = ({
     kCalPercent: $food.kCalPercent,
     name: $food.name,
@@ -1527,14 +1587,14 @@ const u0$App$updateOnFoodPicked = (($effects, $food, $model) => {
     quantity: $food.defaultQuantity,
   });
   const $items = (c0$Core$Cons)($item, $model.items);
-  ((__re__ = (array_push)($effects, (virtualDom_setLocalStorage)("items", (u0$Item$itemsToText)($items)))), ($effects = (__re__)[1]), (__re__)[0]);
+  ((__re__ = (virtualDom_setLocalStorage)($eff, "items", (u0$Item$itemsToText)($items))), ($eff = (__re__)[1]), (__re__)[0]);
   const $0 = $model;
   return ([
     (Object.assign)({}, $0, ({
       items: $items,
-      page: (u0$App$PageTotals)(u0$Totals$init),
+      page: (u0$App$PageTotals)(((__re__ = (u0$Totals$init)($eff, u0$App$OnTotalsMsg, $items)), ($eff = (__re__)[1]), (__re__)[0])),
     })),
-    $effects,
+    $eff,
   ]);
 });
 
@@ -1610,6 +1670,11 @@ const u0$Food$foodsToText = (($0) => {
   })));
 });
 
+const u0$Picker$init = ({
+  editMode: false,
+  search: "",
+});
+
 const u0$Picker$update = (($msg, $foods, $model) => {
   return ((($msg)[0] === "$OnSearchInput")
     ? ((() => {
@@ -1630,103 +1695,115 @@ const u0$Picker$update = (($msg, $foods, $model) => {
       : (sp_throw)('Missing pattern in try..as', 'src/Picker.sp 22:4', (sp_toHuman)($msg))));
 });
 
-const u0$Totals$update = (($msg, $items, $model) => {
-  return ((($msg)[0] === "$OnCleanUpMode")
+const u0$Totals$setTarget = (($targetName, $valueAsText, $model) => {
+  const $value = (c0$Maybe$withDefault)((text_toNumber)($valueAsText), 0);
+  return ((sp_equal)($targetName, u0$Totals$kCalTargetName)
     ? ((() => {
-      const $isActive = ($msg)[1];
-      return ({
-        first: ((() => {
-          const $0 = $model;
-          return (Object.assign)({}, $0, ({
-            cleanUpMode: $isActive,
-          }));
-        }))(),
-        second: $items,
-      });
+      const $0 = $model;
+      return (Object.assign)({}, $0, ({
+        kCalTarget: ($value - (basics_modBy)(50, $value)),
+      }));
     }))()
-    : ((($msg)[0] === "$OnQuantityFocus")
+    : ((sp_equal)($targetName, u0$Totals$proTargetName)
       ? ((() => {
-        const $index = ($msg)[1];
-        return ({
-          first: ((() => {
-            const $0 = $model;
-            return (Object.assign)({}, $0, ({
-              inputNumberAsText: ((() => {
-                const $4 = (c0$List$drop)($index, $items);
-                return ((($4)[0] === "$Nil")
-                  ? ""
-                  : ((($4)[0] === "$Cons")
-                    ? ((() => {
-                      const $item = ($4)[1];
-                      return (text_fromNumber)($item.quantity);
-                    }))()
-                    : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 44:16', (sp_toHuman)($4))));
-              }))(),
-            }));
-          }))(),
-          second: $items,
-        });
+        const $0 = $model;
+        return (Object.assign)({}, $0, ({
+          proTarget: ($value - (basics_modBy)(5, $value)),
+        }));
       }))()
-      : ((($msg)[0] === "$OnQuantityInput")
-        ? ((() => {
-          const $index = ($msg)[1];
-          const $text = ($msg)[2];
-          return ({
-            first: ((() => {
-              const $0 = $model;
-              return (Object.assign)({}, $0, ({
-                inputNumberAsText: $text,
-              }));
-            }))(),
-            second: ((() => {
-              const $4 = (text_toNumber)($text);
-              return ((($4)[0] === "$Nothing")
-                ? $items
-                : ((($4)[0] === "$Just")
-                  ? ((() => {
-                    const $number = ($4)[1];
-                    return (c0$List$mapWithIndex)($items, (($itemIndex, $item) => {
-                      return (((sp_equal)($itemIndex, $index) && (sp_equal)((text_fromNumber)($number), $text))
-                        ? ((() => {
-                          const $0 = $item;
-                          return (Object.assign)({}, $0, ({
-                            quantity: $number,
-                          }));
-                        }))()
-                        : $item);
-                    }));
-                  }))()
-                  : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 54:14', (sp_toHuman)($4))));
-            }))(),
-          });
-        }))()
-        : ((($msg)[0] === "$OnRemove")
-          ? ((() => {
-            const $index = ($msg)[1];
-            return ({
-              first: ((() => {
-                const $0 = $model;
-                return (Object.assign)({}, $0, ({
-                  expandedItemIndex: -(1),
-                }));
-              }))(),
-              second: (c0$List$concat)((c0$Core$Cons)((c0$List$take)($index, $items), (c0$Core$Cons)((c0$List$drop)(($index + 1), $items), c0$Core$Nil))),
-            });
-          }))()
-          : ((($msg)[0] === "$OnClearAll")
-            ? ({
-              first: ((() => {
-                const $0 = $model;
-                return (Object.assign)({}, $0, ({
-                  cleanUpMode: false,
-                }));
-              }))(),
-              second: c0$Core$Nil,
-            })
-            : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 36:4', (sp_toHuman)($msg)))))));
+      : ((() => {
+        const $0 = $model;
+        return (Object.assign)({}, $0, ({
+          proTarget: -(1000),
+        }));
+      }))()));
 });
 
-const u0$App$update = (($effects, $msg, $model) => {
+const u0$Totals$update = (($eff, $msg, $model) => {
+  return ([
+    ((($msg)[0] === "$OnUserSetsTarget")
+      ? ((() => {
+        const $targetName = ($msg)[1];
+        const $valueAsText = ($msg)[2];
+        ((__re__ = (virtualDom_setLocalStorage)($eff, $targetName, $valueAsText)), ($eff = (__re__)[1]), (__re__)[0]);
+        return (u0$Totals$setTarget)($targetName, $valueAsText, $model);
+      }))()
+      : ((($msg)[0] === "$OnGetTargetResponse")
+        ? ((() => {
+          const $targetName = ($msg)[1];
+          const $valueAsText = ($msg)[2];
+          return (u0$Totals$setTarget)($targetName, $valueAsText, $model);
+        }))()
+        : ((($msg)[0] === "$OnDeleteAllMode")
+          ? ((() => {
+            const $isActive = ($msg)[1];
+            const $0 = $model;
+            return (Object.assign)({}, $0, ({
+              deleteAllMode: $isActive,
+            }));
+          }))()
+          : ((($msg)[0] === "$OnToggleExpansion")
+            ? ((() => {
+              const $expansion = ($msg)[1];
+              const $0 = $model;
+              return (Object.assign)({}, $0, ({
+                expansion: ((sp_equal)($0.expansion, $expansion)
+                  ? u0$Totals$ExpansionNone
+                  : $expansion),
+              }));
+            }))()
+            : ((($msg)[0] === "$OnQuantityInput")
+              ? ((() => {
+                const $index = ($msg)[1];
+                const $text = ($msg)[2];
+                const $0 = $model;
+                return (Object.assign)({}, $0, ({
+                  inputNumberAsText: $text,
+                  items: ((() => {
+                    const $4 = (text_toNumber)($text);
+                    return ((($4)[0] === "$Nothing")
+                      ? $0.items
+                      : ((($4)[0] === "$Just")
+                        ? ((() => {
+                          const $number = ($4)[1];
+                          return (c0$List$mapWithIndex)($0.items, (($itemIndex, $item) => {
+                            return (((sp_equal)($itemIndex, $index) && (sp_equal)((text_fromNumber)($number), $text))
+                              ? ((() => {
+                                const $1 = $item;
+                                return (Object.assign)({}, $1, ({
+                                  quantity: $number,
+                                }));
+                              }))()
+                              : $item);
+                          }));
+                        }))()
+                        : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 91:16', (sp_toHuman)($4))));
+                  }))(),
+                }));
+              }))()
+              : ((($msg)[0] === "$OnRemove")
+                ? ((() => {
+                  const $index = ($msg)[1];
+                  const $0 = $model;
+                  return (Object.assign)({}, $0, ({
+                    expansion: u0$Totals$ExpansionNone,
+                    items: (c0$List$concat)((c0$Core$Cons)((c0$List$take)($index, $0.items), (c0$Core$Cons)((c0$List$drop)(($index + 1), $0.items), c0$Core$Nil))),
+                  }));
+                }))()
+                : ((($msg)[0] === "$OnDeleteAll")
+                  ? ((() => {
+                    const $0 = $model;
+                    return (Object.assign)({}, $0, ({
+                      deleteAllMode: false,
+                      items: c0$Core$Nil,
+                    }));
+                  }))()
+                  : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 69:4', (sp_toHuman)($msg))))))))),
+    $eff,
+  ]);
+});
+
+const u0$App$update = (($eff, $msg, $model) => {
   const $4 = ({
     first: $msg,
     second: $model.page,
@@ -1749,24 +1826,24 @@ const u0$App$update = (($effects, $msg, $model) => {
             }), ((_0) => {
               return $food;
             })));
-          ((__re__ = (array_push)($effects, (virtualDom_setLocalStorage)("foods", (u0$Food$foodsToText)($foods)))), ($effects = (__re__)[1]), (__re__)[0]);
-          return ((__re__ = (u0$App$updateOnFoodPicked)($effects, $food, ((() => {
+          ((__re__ = (virtualDom_setLocalStorage)($eff, "foods", (u0$Food$foodsToText)($foods))), ($eff = (__re__)[1]), (__re__)[0]);
+          return ((__re__ = (u0$App$updateOnFoodPicked)($eff, $food, ((() => {
             const $0 = $model;
             return (Object.assign)({}, $0, ({
               foods: $foods,
             }));
-          }))())), ($effects = (__re__)[1]), (__re__)[0]);
+          }))())), ($eff = (__re__)[1]), (__re__)[0]);
         }))()
         : ((($4.first)[0] === "$OnFoodPicked")
           ? ((() => {
             const $food = ($4.first)[1];
-            return ((__re__ = (u0$App$updateOnFoodPicked)($effects, $food, $model)), ($effects = (__re__)[1]), (__re__)[0]);
+            return ((__re__ = (u0$App$updateOnFoodPicked)($eff, $food, $model)), ($eff = (__re__)[1]), (__re__)[0]);
           }))()
           : ((($4.first)[0] === "$OnPickerCancel")
             ? ((() => {
               const $0 = $model;
               return (Object.assign)({}, $0, ({
-                page: (u0$App$PageTotals)(u0$Totals$init),
+                page: (u0$App$PageTotals)(((__re__ = (u0$Totals$init)($eff, u0$App$OnTotalsMsg, $model.items)), ($eff = (__re__)[1]), (__re__)[0])),
               }));
             }))()
             : ((($4.first)[0] === "$OnCreateNewFood")
@@ -1806,21 +1883,24 @@ const u0$App$update = (($effects, $msg, $model) => {
                     : (((($4.first)[0] === "$OnTotalsMsg") && (($4.second)[0] === "$PageTotals"))
                       ? ((() => {
                         const $subMsg = ($4.first)[1];
-                        const $subModel = ($4.second)[1];
-                        const $5 = (u0$Totals$update)($subMsg, $model.items, $subModel);
-                        const $newItems = $5.second;
-                        const $newSubModel = $5.first;
-                        ((sp_not_equal)($newItems, $model.items)
-                          ? ((__re__ = (array_push)($effects, (virtualDom_setLocalStorage)("items", (u0$Item$itemsToText)($newItems)))), ($effects = (__re__)[1]), (__re__)[0])
+                        const $subModelWithOldItems = ($4.second)[1];
+                        const $newSubModel = ((__re__ = (u0$Totals$update)($eff, $subMsg, ((() => {
+                          const $0 = $subModelWithOldItems;
+                          return (Object.assign)({}, $0, ({
+                            items: $model.items,
+                          }));
+                        }))())), ($eff = (__re__)[1]), (__re__)[0]);
+                        ((sp_not_equal)($newSubModel.items, $model.items)
+                          ? ((__re__ = (virtualDom_setLocalStorage)($eff, "items", (u0$Item$itemsToText)($newSubModel.items))), ($eff = (__re__)[1]), (__re__)[0])
                           : null);
                         const $0 = $model;
                         return (Object.assign)({}, $0, ({
-                          items: $newItems,
+                          items: $newSubModel.items,
                           page: (u0$App$PageTotals)($newSubModel),
                         }));
                       }))()
-                      : (sp_throw)('Missing pattern in try..as', 'src/App.sp 84:4', (sp_toHuman)($4))))))))))),
-    $effects,
+                      : (sp_throw)('Missing pattern in try..as', 'src/App.sp 78:4', (sp_toHuman)($4))))))))))),
+    $eff,
   ]);
 });
 
@@ -1959,8 +2039,14 @@ const u0$Picker$view = (($params, $foods, $model) => {
     : (u0$UI$bottomRow)((c0$Core$Cons)((u0$UI$buttonBack)($params.onCancel), (c0$Core$Cons)((u0$UI$buttonEdit)(($params.embed)((u0$Picker$OnToggleEdit)(true))), (c0$Core$Cons)((u0$UI$buttonAdd)(($params.onNewFood)($model.search)), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row align-center w100"), (c0$Core$Cons)((i1$Html$style)("position", "relative"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("w100"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
     return ($params.embed)((u0$Picker$OnSearchInput)($0));
   })), (c0$Core$Cons)((i1$Html$value)($model.search), c0$Core$Nil)))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center"), (c0$Core$Cons)((i1$Html$style)("position", "absolute"), (c0$Core$Cons)((i1$Html$style)("right", "0.5em"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$img)((c0$Core$Cons)((i1$Html$style)("width", "1.2em"), (c0$Core$Cons)((i1$Html$src)("images/search.svg"), c0$Core$Nil))), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mt0"), c0$Core$Nil), (c0$List$map)((list_sortBy)((u0$Picker$sort)($model), (c0$List$filter)($foods, (u0$Picker$filter)($model))), (($food) => {
-    return (i1$Html$button)((c0$Core$Cons)((i1$Html$class)("w100 row mb0 secondary align-center"), (c0$Core$Cons)((i1$Html$onClick)(($params.onPicked)($food)), (c0$Core$Cons)((i1$Html$disabled)($model.editMode), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-left align-center"), (c0$Core$Cons)((i1$Html$style)("width", "60%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$style)("transform", "scale(70%)"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$viewIf)($model.editMode, (u0$UI$buttonEdit)(($params.onEditFood)($food.id))), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("ml0"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)($food.name), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-right"), (c0$Core$Cons)((i1$Html$style)("width", "20%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($food.kCalPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-right"), (c0$Core$Cons)((i1$Html$style)("width", "20%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($food.proteinPercent)), c0$Core$Nil)), c0$Core$Nil))));
+    return (i1$Html$button)((c0$Core$Cons)((i1$Html$class)("w100 row mb0 secondary align-center"), (c0$Core$Cons)((i1$Html$onClick)(($params.onPicked)($food)), (c0$Core$Cons)((i1$Html$disabled)($model.editMode), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-left align-center"), (c0$Core$Cons)((i1$Html$style)("width", "60%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$style)("transform", "scale(70%)"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$viewIf)($model.editMode, ((_0) => {
+      return (u0$UI$buttonEdit)(($params.onEditFood)($food.id));
+    })), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("ml0"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)($food.name), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-right"), (c0$Core$Cons)((i1$Html$style)("width", "20%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($food.kCalPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-right"), (c0$Core$Cons)((i1$Html$style)("width", "20%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($food.proteinPercent)), c0$Core$Nil)), c0$Core$Nil))));
   }))), c0$Core$Nil))));
+});
+
+const u0$Totals$viewDeleteAll = (($embed) => {
+  return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100 justify-center mt1 pt"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$button)((c0$Core$Cons)((i1$Html$onClick)(($embed)(u0$Totals$OnDeleteAll)), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Delete all intake entries"), c0$Core$Nil)), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((u0$UI$buttonBack)(($embed)((u0$Totals$OnDeleteAllMode)(false))), c0$Core$Nil)), c0$Core$Nil)));
 });
 
 const u0$Totals$formatNumber = (($0) => {
@@ -1975,6 +2061,12 @@ const u0$Totals$itemPro = (($item) => {
   return (sp_divide)(($item.quantity * $item.proteinPercent), 100);
 });
 
+const u0$UI$buttonRoundSmall = (($1) => {
+  const $onClick = $1.onClick;
+  const $symbol = $1.symbol;
+  return (i1$Html$button)((c0$Core$Cons)((i1$Html$style)("padding", "16px"), (c0$Core$Cons)((i1$Html$style)("border-radius", "50%"), (c0$Core$Cons)((i1$Html$style)("width", "10vw"), (c0$Core$Cons)((i1$Html$style)("height", "10vw"), (c0$Core$Cons)((i1$Html$style)("font-size", "200%"), (c0$Core$Cons)((i1$Html$style)("display", "flex"), (c0$Core$Cons)((i1$Html$style)("align-items", "center"), (c0$Core$Cons)((i1$Html$style)("justify-content", "center"), (c0$Core$Cons)((i1$Html$onClick)($onClick), c0$Core$Nil))))))))), (c0$Core$Cons)($symbol, c0$Core$Nil));
+});
+
 const u0$UI$buttonTrash = (($onClick) => {
   return (u0$UI$buttonRound)(({
     onClick: $onClick,
@@ -1982,36 +2074,68 @@ const u0$UI$buttonTrash = (($onClick) => {
   }));
 });
 
-const u0$Totals$view = (($embed, $onAdd, $items, $model) => {
-  const $l = (i1$Html$class)("text-left");
-  const $r = (i1$Html$class)("text-right");
-  const $p = (i1$Html$style)("padding", "37px");
-  const $numberWidth = (i1$Html$style)("width", "2.5em");
-  const $nameWidth = (i1$Html$style)("width", "55%");
-  const $headers = ($model.cleanUpMode
-    ? c0$Core$Nil
-    : (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold text-right"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("kCal"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold text-right"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Pro"), c0$Core$Nil)), c0$Core$Nil)))));
-  const $viewItem = (($index, $item) => {
-    return (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$style)("width", "2.5em"), (c0$Core$Cons)((i1$Html$class)("text-right"), (c0$Core$Cons)((i1$Html$on)("focus", ((_0) => {
-      return (c0$Result$Ok)(($embed)((u0$Totals$OnQuantityFocus)($index)));
-    })), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
-      return ($embed)((u0$Totals$OnQuantityInput)($index, $0));
-    })), (c0$Core$Cons)((i1$Html$value)(((sp_equal)($model.expandedItemIndex, $index)
-      ? $model.inputNumberAsText
-      : (text_fromNumber)($item.quantity))), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "number"), c0$Core$Nil))))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)($item.name), c0$Core$Nil)), (c0$Core$Cons)(($model.cleanUpMode
-      ? (i1$Html$div)(c0$Core$Nil, c0$Core$Nil)
-      : (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((u0$Totals$itemKCal)($item))), c0$Core$Nil))), (c0$Core$Cons)(($model.cleanUpMode
-      ? (u0$UI$buttonTrash)(($embed)((u0$Totals$OnRemove)($index)))
-      : (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((u0$Totals$itemPro)($item))), c0$Core$Nil))), c0$Core$Nil))));
+const u0$UI$buttonTrashSmall = (($onClick) => {
+  return (u0$UI$buttonRoundSmall)(({
+    onClick: $onClick,
+    symbol: (i1$Html$img)((c0$Core$Cons)((i1$Html$style)("width", "0.5em"), (c0$Core$Cons)((i1$Html$src)("images/trash.svg"), c0$Core$Nil))),
+  }));
+});
+
+const u0$Totals$viewIntake = (($embed, $onAdd, $items, $model) => {
+  const $target = ({
+    kCal: 850,
+    pro: 150,
   });
-  const $totals = (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((c0$List$for)(0, $items, (($t, $item) => {
-    return ($t + (u0$Totals$itemKCal)($item));
-  })))), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((c0$List$for)(0, $items, (($t, $item) => {
-    return ($t + (u0$Totals$itemPro)($item));
-  })))), c0$Core$Nil)), c0$Core$Nil))));
-  return (i1$Html$div)((c0$Core$Cons)((i1$Html$style)("padding-bottom", "250px"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$viewIf)($model.cleanUpMode, (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mb1"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$button)((c0$Core$Cons)((i1$Html$onClick)(($embed)(u0$Totals$OnClearAll)), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Clear all"), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), (c0$Core$Cons)((i1$Html$style)("display", "grid"), (c0$Core$Cons)((i1$Html$style)("grid-template-columns", "auto 1fr auto auto"), (c0$Core$Cons)((i1$Html$style)("gap", "0.2em 0.4em"), c0$Core$Nil)))), (c0$List$concat)((c0$Core$Cons)($headers, (c0$Core$Cons)((c0$List$concat)((c0$List$reverse)((c0$List$mapWithIndex)($items, $viewItem))), (c0$Core$Cons)($totals, c0$Core$Nil))))), (c0$Core$Cons)(($model.cleanUpMode
-    ? (u0$UI$bottomRow)((c0$Core$Cons)((u0$UI$buttonBack)(($embed)((u0$Totals$OnCleanUpMode)(false))), c0$Core$Nil))
-    : (u0$UI$bottomRow)((c0$Core$Cons)((i1$Html$viewIf)((sp_not_equal)($items, c0$Core$Nil), (u0$UI$buttonTrash)(($embed)((u0$Totals$OnCleanUpMode)(true)))), (c0$Core$Cons)((u0$UI$buttonAdd)($onAdd), c0$Core$Nil)))), c0$Core$Nil))));
+  const $s = i1$Html$style;
+  const $p = ($s)("padding", "1%");
+  const $quantityWidth = ($s)("width", "13%");
+  const $nameWidth = ($s)("width", "53%");
+  const $kCalWidth = ($s)("width", "13%");
+  const $proWidth = ($s)("width", "13%");
+  const $viewHeader = (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($quantityWidth, (c0$Core$Cons)($p, (c0$Core$Cons)((i1$Html$class)("bold text-right text-sm"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("g"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($nameWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($kCalWidth, (c0$Core$Cons)($p, (c0$Core$Cons)((i1$Html$class)("bold text-right text-sm"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("kCal"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($proWidth, (c0$Core$Cons)($p, (c0$Core$Cons)((i1$Html$class)("bold text-right text-sm"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("Pro"), c0$Core$Nil)), c0$Core$Nil))))), c0$Core$Nil);
+  const $viewItem = (($index, $item) => {
+    return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col"), (c0$Core$Cons)((i1$Html$classIf)((sp_equal)($model.expansion, (u0$Totals$ExpansionItem)($index)), "border mb1"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row mb0"), (c0$Core$Cons)((i1$Html$style)("color", "#2aad09"), (c0$Core$Cons)((i1$Html$onClick)(($embed)((u0$Totals$OnToggleExpansion)((u0$Totals$ExpansionItem)($index)))), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("justify-end"), (c0$Core$Cons)($quantityWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($item.quantity)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center"), (c0$Core$Cons)($nameWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)($item.name), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)($kCalWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((u0$Totals$itemKCal)($item))), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)($proWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((u0$Totals$itemPro)($item))), c0$Core$Nil)), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$viewIf)((sp_equal)($model.expansion, (u0$Totals$ExpansionItem)($index)), ((_0) => {
+      return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row align-center mr1 ml1"), c0$Core$Nil), (c0$Core$Cons)((u0$UI$buttonRoundSmall)(({
+        onClick: ($embed)((u0$Totals$OnQuantityInput)($index, (text_fromNumber)(($item.quantity - 1)))),
+        symbol: (i1$Html$text)("-"),
+      })), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("flex1 ml0 mr0"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
+        return ($embed)((u0$Totals$OnQuantityInput)($index, $0));
+      })), (c0$Core$Cons)((i1$Html$value)((text_fromNumber)($item.quantity)), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "range"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("min", "1"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("max", "300"), c0$Core$Nil))))))), (c0$Core$Cons)((u0$UI$buttonRoundSmall)(({
+        onClick: ($embed)((u0$Totals$OnQuantityInput)($index, (text_fromNumber)(($item.quantity + 1)))),
+        symbol: (i1$Html$text)("+"),
+      })), c0$Core$Nil))));
+    })), (c0$Core$Cons)((i1$Html$viewIf)((sp_equal)($model.expansion, (u0$Totals$ExpansionItem)($index)), ((_0) => {
+      return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row mt1 mr1 ml1 mb0"), c0$Core$Nil), (c0$Core$Cons)((u0$UI$buttonTrashSmall)(($embed)((u0$Totals$OnRemove)($index))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col ml1 text-right"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$span)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($item.kCalPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$span)((c0$Core$Cons)((i1$Html$class)("text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)(" kCal/100g"), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$span)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($item.proteinPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$span)((c0$Core$Cons)((i1$Html$class)("text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)(" pro/100g"), c0$Core$Nil)), c0$Core$Nil))), c0$Core$Nil))), c0$Core$Nil)));
+    })), c0$Core$Nil))));
+  });
+  const $viewTarget = (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col"), (c0$Core$Cons)((i1$Html$classIf)((sp_equal)($model.expansion, u0$Totals$ExpansionTargets), "border mb1"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row text-green"), (c0$Core$Cons)((i1$Html$style)("color", "#f6f6f6"), (c0$Core$Cons)((i1$Html$style)("background-color", "#2aad09"), (c0$Core$Cons)((i1$Html$onClick)(($embed)((u0$Totals$OnToggleExpansion)(u0$Totals$ExpansionTargets))), c0$Core$Nil)))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($quantityWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($nameWidth, (c0$Core$Cons)((i1$Html$class)("text-sm justify-end align-center pr"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Target"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)($kCalWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($model.kCalTarget)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)($proWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($model.proTarget)), c0$Core$Nil)), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$viewIf)((sp_equal)($model.expansion, u0$Totals$ExpansionTargets), ((_0) => {
+    return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col mt0 ml0 mr0"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("kCal target"), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("flex1"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
+      return ($embed)((u0$Totals$OnUserSetsTarget)(u0$Totals$kCalTargetName, $0));
+    })), (c0$Core$Cons)((i1$Html$value)((text_fromNumber)($model.kCalTarget)), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "range"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("min", "300"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("max", "3000"), c0$Core$Nil))))))), (c0$Core$Cons)((i1$Html$text)("protein target"), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("flex1"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
+      return ($embed)((u0$Totals$OnUserSetsTarget)(u0$Totals$proTargetName, $0));
+    })), (c0$Core$Cons)((i1$Html$value)((text_fromNumber)($model.proTarget)), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "range"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("min", "20"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("max", "200"), c0$Core$Nil))))))), c0$Core$Nil)))));
+  })), c0$Core$Nil))), c0$Core$Nil);
+  const $viewTotals = ((() => {
+    const $availableKCal = ($model.kCalTarget - (c0$List$for)(0, $items, (($t, $item) => {
+      return ($t + (u0$Totals$itemKCal)($item));
+    })));
+    const $availablePro = ($model.proTarget - (c0$List$for)(0, $items, (($t, $item) => {
+      return ($t + (u0$Totals$itemPro)($item));
+    })));
+    return (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($quantityWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($nameWidth, (c0$Core$Cons)((i1$Html$class)("bold text-sm justify-end align-center pr"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Available"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), (c0$Core$Cons)((i1$Html$classIf)(($availableKCal < 0), "text-red"), (c0$Core$Cons)($kCalWidth, (c0$Core$Cons)($p, c0$Core$Nil)))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($availableKCal)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), (c0$Core$Cons)($proWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($availablePro)), c0$Core$Nil)), c0$Core$Nil))))), c0$Core$Nil);
+  }))();
+  const $viewItems = ((sp_equal)($items, c0$Core$Nil)
+    ? (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mt1 pt mb1 pb justify-center text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("No entries"), c0$Core$Nil)), c0$Core$Nil)
+    : (c0$List$reverse)((c0$List$mapWithIndex)($items, $viewItem)));
+  return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$h1)((c0$Core$Cons)((i1$Html$class)("w100 justify-center"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Intake"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$List$concat)((c0$Core$Cons)($viewHeader, (c0$Core$Cons)($viewItems, (c0$Core$Cons)($viewTarget, (c0$Core$Cons)($viewTotals, c0$Core$Nil)))))), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((i1$Html$viewIf)((sp_not_equal)($items, c0$Core$Nil), ((_0) => {
+    return (u0$UI$buttonTrash)(($embed)((u0$Totals$OnDeleteAllMode)(true)));
+  })), (c0$Core$Cons)((u0$UI$buttonAdd)($onAdd), c0$Core$Nil))), c0$Core$Nil))));
+});
+
+const u0$Totals$view = (($embed, $onAdd, $items, $model) => {
+  return ($model.deleteAllMode
+    ? (u0$Totals$viewDeleteAll)($embed)
+    : (u0$Totals$viewIntake)($embed, $onAdd, $items, $model));
 });
 
 const u0$App$view = (($model) => {
@@ -2037,7 +2161,7 @@ const u0$App$view = (($model) => {
           const $subModel = ($2)[1];
           return (u0$Totals$view)(u0$App$OnTotalsMsg, u0$App$OnClickOpenPicker, $model.items, $subModel);
         }))()
-        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 139:4', (sp_toHuman)($2)))));
+        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 134:4', (sp_toHuman)($2)))));
 });
 
 const u0$App$main = ({

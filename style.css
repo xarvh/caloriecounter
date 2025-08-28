@@ -12,8 +12,10 @@
 .flex1 { flex-grow: 1; }
 
 .text-red { color: red; }
+.text-green { color: #2aad09; }
 .text-sm { font-size: 70%; }
 .text-left { text-align: left; }
+.text-center { text-align: center; }
 .text-right { text-align: right; }
 
 .w100 { width: 100%; }
@@ -34,7 +36,7 @@
 .pb { padding-bottom: 1em; }
 .pl { padding-left: 1em; }
 .pr { padding-right: 1em; }
-.border { border: 1px solid lightgray; }
+.border { border: 1px solid #2aad09; border-radius: 2vw; }
 
 .thirds > * {
   max-width: 90vw;
@@ -50,21 +52,30 @@
 
 
 body {
-  display: flex;
-  justify-content: center;
-
   color: #3d3d3d;
   background: #f1f1f1;
   font-family: 'Fira Sans', sans-serif;
-  font-size: 500%; /* There's something weird with font size... */
+  font-size: 400%; /* There's something weird with font size... */
+  margin: 0;
+
+  display: flex;
+  justify-content: center;
 }
 
-body > * {
-  margin: 0.4em;
+#app {
+  width: 100%;
+  max-width: 980px;
+  margin: 16px;
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+h1 {
+  font-size: 1.2em;
+  margin-block-start: 0.1em;
+  margin-block-end: 0.3em;
 }
 
 a { color: #fb4934; }
