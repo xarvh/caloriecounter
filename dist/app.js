@@ -2116,18 +2116,18 @@ const u0$Totals$viewIntake = (($embed, $onAdd, $items, $model) => {
     })), (c0$Core$Cons)((i1$Html$value)((text_fromNumber)($model.proTarget)), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "range"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("min", "20"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("max", "200"), c0$Core$Nil))))))), c0$Core$Nil)))));
   })), c0$Core$Nil))), c0$Core$Nil);
   const $viewTotals = ((() => {
-    const $availableKCal = ($model.kCalTarget - (c0$List$for)(0, $items, (($t, $item) => {
+    const $availableKCal = (c0$List$for)(0, $items, (($t, $item) => {
       return ($t + (u0$Totals$itemKCal)($item));
-    })));
-    const $availablePro = ($model.proTarget - (c0$List$for)(0, $items, (($t, $item) => {
+    }));
+    const $availablePro = (c0$List$for)(0, $items, (($t, $item) => {
       return ($t + (u0$Totals$itemPro)($item));
-    })));
+    }));
     return (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($quantityWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($nameWidth, (c0$Core$Cons)((i1$Html$class)("bold text-sm justify-end align-center pr"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Available"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), (c0$Core$Cons)((i1$Html$classIf)(($availableKCal < 0), "text-red"), (c0$Core$Cons)($kCalWidth, (c0$Core$Cons)($p, c0$Core$Nil)))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($availableKCal)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), (c0$Core$Cons)($proWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($availablePro)), c0$Core$Nil)), c0$Core$Nil))))), c0$Core$Nil);
   }))();
   const $viewItems = ((sp_equal)($items, c0$Core$Nil)
     ? (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mt1 pt mb1 pb justify-center text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("No entries"), c0$Core$Nil)), c0$Core$Nil)
     : (c0$List$reverse)((c0$List$mapWithIndex)($items, $viewItem)));
-  return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$h1)((c0$Core$Cons)((i1$Html$class)("w100 justify-center"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Intake"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$List$concat)((c0$Core$Cons)($viewHeader, (c0$Core$Cons)($viewItems, (c0$Core$Cons)($viewTarget, (c0$Core$Cons)($viewTotals, c0$Core$Nil)))))), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((i1$Html$viewIf)((sp_not_equal)($items, c0$Core$Nil), ((_0) => {
+  return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$h1)((c0$Core$Cons)((i1$Html$class)("w100 justify-center"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Intake"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$List$concat)((c0$Core$Cons)($viewHeader, (c0$Core$Cons)($viewItems, (c0$Core$Cons)($viewTotals, c0$Core$Nil))))), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((i1$Html$viewIf)((sp_not_equal)($items, c0$Core$Nil), ((_0) => {
     return (u0$UI$buttonTrash)(($embed)((u0$Totals$OnDeleteAllMode)(true)));
   })), (c0$Core$Cons)((u0$UI$buttonAdd)($onAdd), c0$Core$Nil))), c0$Core$Nil))));
 });
