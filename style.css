@@ -7,6 +7,7 @@
 .col { display: flex; flex-direction: column; }
 .justify-center { display: flex; justify-content: center; }
 .justify-end { display: flex; justify-content: end; }
+.justify-around { display: flex; justify-content: space-around; }
 .align-center { display: flex; align-items: center; }
 .nowrap { display: flex; flex-wrap: nowrap; }
 .flex1 { flex-grow: 1; }
@@ -21,11 +22,13 @@
 .w100 { width: 100%; }
 .h100 { height: 100%; }
 
+.gap0 { gap: 0.25em; }
 .mt0 { margin-top: 0.25em; }
 .mb0 { margin-bottom: 0.25em; }
 .ml0 { margin-left: 0.25em; }
 .mr0 { margin-right: 0.25em; }
 
+.gap1 { gap: 1em; }
 .mt1 { margin-top: 1em; }
 .mb1 { margin-bottom: 1em; }
 .ml1 { margin-left: 1em; }
@@ -97,8 +100,9 @@ button {
     background: #2aad09;
 }
 
-button:disabled {
+button.disabled {
     border: 4px solid #5a5a5a;
+    background: #ddd;
 }
 
 button.secondary {
@@ -108,6 +112,15 @@ button.secondary {
 
 button.secondary:disabled {
     color: #5a5a5a;
+}
+
+button.list {
+    color: #2aad09;
+    background: none;
+    border: none;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 0.25em;
 }
 
 input {
