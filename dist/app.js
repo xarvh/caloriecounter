@@ -1599,11 +1599,25 @@ const u0$Item$textToItems = (($0) => {
   }));
 });
 
-const u0$Picker$init = (($eff) => {
-  ((__re__ = (virtualDom_focus)($eff, "#search")), ($eff = (__re__)[1]), (__re__)[0]);
+const u0$Totals$kCalTargetName = "kCalTarget";
+
+const u0$Totals$proTargetName = "proTarget";
+
+const u0$Totals$init = (($eff, $embed, $items) => {
+  ((__re__ = (virtualDom_getLocalStorage)($eff, u0$Totals$kCalTargetName, (($0) => {
+    return ($embed)((u0$Totals$OnGetTargetResponse)(u0$Totals$kCalTargetName, $0));
+  }))), ($eff = (__re__)[1]), (__re__)[0]);
+  ((__re__ = (virtualDom_getLocalStorage)($eff, u0$Totals$proTargetName, (($0) => {
+    return ($embed)((u0$Totals$OnGetTargetResponse)(u0$Totals$proTargetName, $0));
+  }))), ($eff = (__re__)[1]), (__re__)[0]);
   return ([
     ({
-      search: "",
+      deleteAllMode: false,
+      expansion: u0$Totals$ExpansionNone,
+      inputNumberAsText: "",
+      items: $items,
+      kCalTarget: 0,
+      proTarget: 0,
     }),
     $eff,
   ]);
@@ -1620,7 +1634,7 @@ const u0$App$init = (($flags, $eff) => {
     ({
       foods: $foods,
       items: $items,
-      page: (u0$App$PagePicker)(((__re__ = (u0$Picker$init)($eff)), ($eff = (__re__)[1]), (__re__)[0])),
+      page: (u0$App$PageTotals)(((__re__ = (u0$Totals$init)($eff, u0$App$OnTotalsMsg, $items)), ($eff = (__re__)[1]), (__re__)[0])),
     }),
     $eff,
   ]);
@@ -1849,6 +1863,16 @@ const u0$Item$itemsToText = (($0) => {
   })));
 });
 
+const u0$Picker$init = (($eff) => {
+  ((__re__ = (virtualDom_focus)($eff, "#search")), ($eff = (__re__)[1]), (__re__)[0]);
+  return ([
+    ({
+      search: "",
+    }),
+    $eff,
+  ]);
+});
+
 const u0$Picker$update = (($msg, $foods, $model) => {
   return ((($msg)[0] === "$OnSearchInput")
     ? ((() => {
@@ -1859,30 +1883,6 @@ const u0$Picker$update = (($msg, $foods, $model) => {
       }));
     }))()
     : (sp_throw)('Missing pattern in try..as', 'src/Picker.sp 22:4', (sp_toHuman)($msg)));
-});
-
-const u0$Totals$kCalTargetName = "kCalTarget";
-
-const u0$Totals$proTargetName = "proTarget";
-
-const u0$Totals$init = (($eff, $embed, $items) => {
-  ((__re__ = (virtualDom_getLocalStorage)($eff, u0$Totals$kCalTargetName, (($0) => {
-    return ($embed)((u0$Totals$OnGetTargetResponse)(u0$Totals$kCalTargetName, $0));
-  }))), ($eff = (__re__)[1]), (__re__)[0]);
-  ((__re__ = (virtualDom_getLocalStorage)($eff, u0$Totals$proTargetName, (($0) => {
-    return ($embed)((u0$Totals$OnGetTargetResponse)(u0$Totals$proTargetName, $0));
-  }))), ($eff = (__re__)[1]), (__re__)[0]);
-  return ([
-    ({
-      deleteAllMode: false,
-      expansion: u0$Totals$ExpansionNone,
-      inputNumberAsText: "",
-      items: $items,
-      kCalTarget: 0,
-      proTarget: 0,
-    }),
-    $eff,
-  ]);
 });
 
 const u0$Totals$setTarget = (($targetName, $valueAsText, $model) => {
@@ -2139,7 +2139,7 @@ const u0$App$update = (($eff, $msg, $model) => {
                             page: (u0$App$PageTotals)($newSubModel),
                           }));
                         }))()
-                        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 65:4', (sp_toHuman)($4)))))))))))),
+                        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 63:4', (sp_toHuman)($4)))))))))))),
     $eff,
   ]);
 });
@@ -2339,7 +2339,7 @@ const u0$App$view = (($model) => {
           const $subModel = ($2)[1];
           return (u0$Totals$view)(u0$App$OnTotalsMsg, u0$App$OnClickOpenPicker, $model.items, $subModel);
         }))()
-        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 165:4', (sp_toHuman)($2)))));
+        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 163:4', (sp_toHuman)($2)))));
 });
 
 const u0$App$main = ({
