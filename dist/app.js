@@ -789,10 +789,9 @@ const u0$App$PagePicker = (($1) => ([
   $1,
 ]));
 
-const u0$App$PageTotals = (($1) => ([
+const u0$App$PageTotals = ([
   "$PageTotals",
-  $1,
-]));
+]);
 
 const u0$EditFood$OnClickBack = ([
   "$OnClickBack",
@@ -836,22 +835,27 @@ const u0$EditFood$OnQtyInput = (($1) => ([
   $1,
 ]));
 
+const u0$Item$Food = (($1) => ([
+  "$Food",
+  $1,
+]));
+
+const u0$Item$Target = (($1) => ([
+  "$Target",
+  $1,
+]));
+
 const u0$Picker$OnSearchInput = (($1) => ([
   "$OnSearchInput",
   $1,
 ]));
 
-const u0$Totals$ExpansionItem = (($1) => ([
-  "$ExpansionItem",
-  $1,
-]));
-
-const u0$Totals$ExpansionNone = ([
-  "$ExpansionNone",
+const u0$Totals$FoodQuantity = ([
+  "$FoodQuantity",
 ]);
 
-const u0$Totals$ExpansionTargets = ([
-  "$ExpansionTargets",
+const u0$Totals$OnAddTarget = ([
+  "$OnAddTarget",
 ]);
 
 const u0$Totals$OnDeleteAll = ([
@@ -863,16 +867,11 @@ const u0$Totals$OnDeleteAllMode = (($1) => ([
   $1,
 ]));
 
-const u0$Totals$OnGetTargetResponse = (($1, $2) => ([
-  "$OnGetTargetResponse",
-  $1,
-  $2,
-]));
-
-const u0$Totals$OnQuantityInput = (($1, $2) => ([
+const u0$Totals$OnQuantityInput = (($1, $2, $3) => ([
   "$OnQuantityInput",
   $1,
   $2,
+  $3,
 ]));
 
 const u0$Totals$OnRemove = (($1) => ([
@@ -885,11 +884,13 @@ const u0$Totals$OnToggleExpansion = (($1) => ([
   $1,
 ]));
 
-const u0$Totals$OnUserSetsTarget = (($1, $2) => ([
-  "$OnUserSetsTarget",
-  $1,
-  $2,
-]));
+const u0$Totals$TargetCalories = ([
+  "$TargetCalories",
+]);
+
+const u0$Totals$TargetProtein = ([
+  "$TargetProtein",
+]);
 
 const c0$Basics$max = (($a, $b) => {
   return (($a > $b)
@@ -1572,55 +1573,51 @@ const u0$Food$textToFoods = (($0) => {
 const u0$Item$textToItems = (($0) => {
   return (c0$List$map)((text_split)("\n", $0), (($itemAsText) => {
     const $3 = (text_split)("\t", $itemAsText);
-    return (((($3)[0] === "$Cons") && (((($3)[2])[0] === "$Cons") && ((((($3)[2])[2])[0] === "$Cons") && (((((($3)[2])[2])[2])[0] === "$Cons") && (((((($3)[2])[2])[2])[2])[0] === "$Nil")))))
+    return (((($3)[0] === "$Cons") && (((($3)[2])[0] === "$Cons") && (((($3)[2])[2])[0] === "$Nil")))
       ? ((() => {
-        const $qty = ($3)[1];
-        const $name = (($3)[2])[1];
-        const $kcal = ((($3)[2])[2])[1];
-        const $pro = (((($3)[2])[2])[2])[1];
-        const $quantity = (c0$Maybe$withDefault)((text_toNumber)($qty), 1);
-        const $kCalPercent = (c0$Maybe$withDefault)((text_toNumber)($kcal), 1);
-        const $proteinPercent = (c0$Maybe$withDefault)((text_toNumber)($pro), 1);
-        return ({
-          kCalPercent: $kCalPercent,
-          name: $name,
-          proteinPercent: $proteinPercent,
-          quantity: $quantity,
-        });
+        const $kcal = ($3)[1];
+        const $pro = (($3)[2])[1];
+        const $kCal = (c0$Maybe$withDefault)((text_toNumber)($kcal), 1);
+        const $protein = (c0$Maybe$withDefault)((text_toNumber)($pro), 1);
+        return (u0$Item$Target)(({
+          kCal: $kCal,
+          protein: $protein,
+        }));
       }))()
-      : (true
-        ? ({
-          kCalPercent: 0,
-          name: $itemAsText,
-          proteinPercent: 0,
-          quantity: 0,
-        })
-        : (sp_throw)('Missing pattern in try..as', 'src/Item.sp 14:8', (sp_toHuman)($3))));
+      : (((($3)[0] === "$Cons") && (((($3)[2])[0] === "$Cons") && ((((($3)[2])[2])[0] === "$Cons") && (((((($3)[2])[2])[2])[0] === "$Cons") && (((((($3)[2])[2])[2])[2])[0] === "$Nil")))))
+        ? ((() => {
+          const $qty = ($3)[1];
+          const $name = (($3)[2])[1];
+          const $kcal = ((($3)[2])[2])[1];
+          const $pro = (((($3)[2])[2])[2])[1];
+          const $quantity = (c0$Maybe$withDefault)((text_toNumber)($qty), 1);
+          const $kCalPercent = (c0$Maybe$withDefault)((text_toNumber)($kcal), 1);
+          const $proteinPercent = (c0$Maybe$withDefault)((text_toNumber)($pro), 1);
+          return (u0$Item$Food)(({
+            kCalPercent: $kCalPercent,
+            name: $name,
+            proteinPercent: $proteinPercent,
+            quantity: $quantity,
+          }));
+        }))()
+        : (true
+          ? (u0$Item$Food)(({
+            kCalPercent: 0,
+            name: $itemAsText,
+            proteinPercent: 0,
+            quantity: 0,
+          }))
+          : (sp_throw)('Missing pattern in try..as', 'src/Item.sp 20:8', (sp_toHuman)($3)))));
   }));
 });
 
-const u0$Totals$kCalTargetName = "kCalTarget";
-
-const u0$Totals$proTargetName = "proTarget";
-
-const u0$Totals$init = (($eff, $embed, $items) => {
-  ((__re__ = (virtualDom_getLocalStorage)($eff, u0$Totals$kCalTargetName, (($0) => {
-    return ($embed)((u0$Totals$OnGetTargetResponse)(u0$Totals$kCalTargetName, $0));
-  }))), ($eff = (__re__)[1]), (__re__)[0]);
-  ((__re__ = (virtualDom_getLocalStorage)($eff, u0$Totals$proTargetName, (($0) => {
-    return ($embed)((u0$Totals$OnGetTargetResponse)(u0$Totals$proTargetName, $0));
-  }))), ($eff = (__re__)[1]), (__re__)[0]);
-  return ([
-    ({
-      deleteAllMode: false,
-      expansion: u0$Totals$ExpansionNone,
-      inputNumberAsText: "",
-      items: $items,
-      kCalTarget: 0,
-      proTarget: 0,
-    }),
-    $eff,
-  ]);
+const u0$Totals$init = (($items) => {
+  return ({
+    deleteAllMode: false,
+    expansion: -(1),
+    inputNumberAsText: "",
+    items: $items,
+  });
 });
 
 const u0$App$init = (($flags, $eff) => {
@@ -1633,8 +1630,8 @@ const u0$App$init = (($flags, $eff) => {
   return ([
     ({
       foods: $foods,
-      items: $items,
-      page: (u0$App$PageTotals)(((__re__ = (u0$Totals$init)($eff, u0$App$OnTotalsMsg, $items)), ($eff = (__re__)[1]), (__re__)[0])),
+      page: u0$App$PageTotals,
+      totals: (u0$Totals$init)($items),
     }),
     $eff,
   ]);
@@ -1857,12 +1854,6 @@ const u0$EditFood$update = (($config, $eff, $msg, $model) => {
   ]);
 });
 
-const u0$Item$itemsToText = (($0) => {
-  return (c0$Text$join)("\n", (c0$List$map)($0, (($item) => {
-    return (c0$Text$join)("\t", (c0$Core$Cons)((text_fromNumber)($item.quantity), (c0$Core$Cons)($item.name, (c0$Core$Cons)((text_fromNumber)($item.kCalPercent), (c0$Core$Cons)((text_fromNumber)($item.proteinPercent), c0$Core$Nil)))));
-  })));
-});
-
 const u0$Picker$init = (($eff) => {
   ((__re__ = (virtualDom_focus)($eff, "#search")), ($eff = (__re__)[1]), (__re__)[0]);
   return ([
@@ -1885,67 +1876,86 @@ const u0$Picker$update = (($msg, $foods, $model) => {
     : (sp_throw)('Missing pattern in try..as', 'src/Picker.sp 22:4', (sp_toHuman)($msg)));
 });
 
-const u0$Totals$setTarget = (($targetName, $valueAsText, $model) => {
-  const $value = (c0$Maybe$withDefault)((text_toNumber)($valueAsText), 0);
-  return ((sp_equal)($targetName, u0$Totals$kCalTargetName)
-    ? ((() => {
-      const $0 = $model;
-      return (Object.assign)({}, $0, ({
-        kCalTarget: ($value - (basics_modBy)(50, $value)),
-      }));
-    }))()
-    : ((sp_equal)($targetName, u0$Totals$proTargetName)
+const u0$Totals$roundBy = (($mod, $number) => {
+  return ($number - (basics_modBy)($mod, $number));
+});
+
+const u0$Item$itemsToText = (($0) => {
+  return (c0$Text$join)("\n", (c0$List$map)($0, (($0) => {
+    return ((($0)[0] === "$Target")
       ? ((() => {
-        const $0 = $model;
-        return (Object.assign)({}, $0, ({
-          proTarget: ($value - (basics_modBy)(5, $value)),
-        }));
+        const $target = ($0)[1];
+        return (c0$Text$join)("\t", (c0$Core$Cons)((text_fromNumber)($target.kCal), (c0$Core$Cons)((text_fromNumber)($target.protein), c0$Core$Nil)));
       }))()
-      : ((() => {
-        const $0 = $model;
-        return (Object.assign)({}, $0, ({
-          proTarget: -(1000),
-        }));
-      }))()));
+      : ((($0)[0] === "$Food")
+        ? ((() => {
+          const $food = ($0)[1];
+          return (c0$Text$join)("\t", (c0$Core$Cons)((text_fromNumber)($food.quantity), (c0$Core$Cons)($food.name, (c0$Core$Cons)((text_fromNumber)($food.kCalPercent), (c0$Core$Cons)((text_fromNumber)($food.proteinPercent), c0$Core$Nil)))));
+        }))()
+        : (sp_throw)('Missing pattern in try..as', 'src/Item.sp 51:9', (sp_toHuman)($0))));
+  })));
+});
+
+const u0$Totals$saveItems = (($eff, $model) => {
+  ((__re__ = (virtualDom_setLocalStorage)($eff, "items", (u0$Item$itemsToText)($model.items))), ($eff = (__re__)[1]), (__re__)[0]);
+  return ([
+    $model,
+    $eff,
+  ]);
 });
 
 const u0$Totals$update = (($eff, $msg, $model) => {
   return ([
-    ((($msg)[0] === "$OnUserSetsTarget")
+    ((($msg)[0] === "$OnDeleteAllMode")
       ? ((() => {
-        const $targetName = ($msg)[1];
-        const $valueAsText = ($msg)[2];
-        ((__re__ = (virtualDom_setLocalStorage)($eff, $targetName, $valueAsText)), ($eff = (__re__)[1]), (__re__)[0]);
-        return (u0$Totals$setTarget)($targetName, $valueAsText, $model);
+        const $isActive = ($msg)[1];
+        const $0 = $model;
+        return (Object.assign)({}, $0, ({
+          deleteAllMode: $isActive,
+        }));
       }))()
-      : ((($msg)[0] === "$OnGetTargetResponse")
+      : ((($msg)[0] === "$OnDeleteAll")
         ? ((() => {
-          const $targetName = ($msg)[1];
-          const $valueAsText = ($msg)[2];
-          return (u0$Totals$setTarget)($targetName, $valueAsText, $model);
-        }))()
-        : ((($msg)[0] === "$OnDeleteAllMode")
-          ? ((() => {
-            const $isActive = ($msg)[1];
+          const $target = ({
+            kCal: 700,
+            protein: 48,
+          });
+          return ((__re__ = (u0$Totals$saveItems)($eff, ((() => {
             const $0 = $model;
             return (Object.assign)({}, $0, ({
-              deleteAllMode: $isActive,
+              deleteAllMode: false,
+              items: (c0$Core$Cons)((u0$Item$Target)($target), c0$Core$Nil),
+            }));
+          }))())), ($eff = (__re__)[1]), (__re__)[0]);
+        }))()
+        : ((($msg)[0] === "$OnToggleExpansion")
+          ? ((() => {
+            const $expansion = ($msg)[1];
+            ((__re__ = (virtualDom_focus)($eff, "#quantity")), ($eff = (__re__)[1]), (__re__)[0]);
+            const $0 = $model;
+            return (Object.assign)({}, $0, ({
+              expansion: ((sp_equal)($0.expansion, $expansion)
+                ? -(1)
+                : $expansion),
+              inputNumberAsText: ((() => {
+                const $4 = (c0$List$drop)($expansion, $model.items);
+                return (((($4)[0] === "$Cons") && ((($4)[1])[0] === "$Food"))
+                  ? ((() => {
+                    const $f = (($4)[1])[1];
+                    return (text_fromNumber)($f.quantity);
+                  }))()
+                  : (true
+                    ? ""
+                    : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 88:16', (sp_toHuman)($4))));
+              }))(),
             }));
           }))()
-          : ((($msg)[0] === "$OnToggleExpansion")
+          : ((($msg)[0] === "$OnQuantityInput")
             ? ((() => {
-              const $expansion = ($msg)[1];
-              const $0 = $model;
-              return (Object.assign)({}, $0, ({
-                expansion: ((sp_equal)($0.expansion, $expansion)
-                  ? u0$Totals$ExpansionNone
-                  : $expansion),
-              }));
-            }))()
-            : ((($msg)[0] === "$OnQuantityInput")
-              ? ((() => {
-                const $index = ($msg)[1];
-                const $text = ($msg)[2];
+              const $index = ($msg)[1];
+              const $selector = ($msg)[2];
+              const $text = ($msg)[3];
+              return ((__re__ = (u0$Totals$saveItems)($eff, ((() => {
                 const $0 = $model;
                 return (Object.assign)({}, $0, ({
                   inputNumberAsText: $text,
@@ -1959,36 +1969,93 @@ const u0$Totals$update = (($eff, $msg, $model) => {
                           return (c0$List$mapWithIndex)($0.items, (($itemIndex, $item) => {
                             return (((sp_equal)($itemIndex, $index) && (sp_equal)((text_fromNumber)($number), $text))
                               ? ((() => {
-                                const $1 = $item;
-                                return (Object.assign)({}, $1, ({
-                                  quantity: $number,
-                                }));
+                                const $7 = ({
+                                  first: $item,
+                                  second: $selector,
+                                });
+                                return ((($7.first)[0] === "$Food")
+                                  ? ((() => {
+                                    const $f = ($7.first)[1];
+                                    return (u0$Item$Food)(((() => {
+                                      const $1 = $f;
+                                      return (Object.assign)({}, $1, ({
+                                        quantity: $number,
+                                      }));
+                                    }))());
+                                  }))()
+                                  : (((($7.first)[0] === "$Target") && (($7.second)[0] === "$TargetCalories"))
+                                    ? ((() => {
+                                      const $t = ($7.first)[1];
+                                      return (u0$Item$Target)(((() => {
+                                        const $1 = $t;
+                                        return (Object.assign)({}, $1, ({
+                                          kCal: (u0$Totals$roundBy)(50, $number),
+                                        }));
+                                      }))());
+                                    }))()
+                                    : (((($7.first)[0] === "$Target") && (($7.second)[0] === "$TargetProtein"))
+                                      ? ((() => {
+                                        const $t = ($7.first)[1];
+                                        return (u0$Item$Target)(((() => {
+                                          const $1 = $t;
+                                          return (Object.assign)({}, $1, ({
+                                            protein: (u0$Totals$roundBy)(5, $number),
+                                          }));
+                                        }))());
+                                      }))()
+                                      : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 105:32', (sp_toHuman)($7)))));
                               }))()
                               : $item);
                           }));
                         }))()
-                        : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 91:16', (sp_toHuman)($4))));
+                        : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 97:16', (sp_toHuman)($4))));
                   }))(),
                 }));
-              }))()
-              : ((($msg)[0] === "$OnRemove")
-                ? ((() => {
-                  const $index = ($msg)[1];
+              }))())), ($eff = (__re__)[1]), (__re__)[0]);
+            }))()
+            : ((($msg)[0] === "$OnRemove")
+              ? ((() => {
+                const $index = ($msg)[1];
+                return ((__re__ = (u0$Totals$saveItems)($eff, ((() => {
                   const $0 = $model;
                   return (Object.assign)({}, $0, ({
-                    expansion: u0$Totals$ExpansionNone,
+                    expansion: -(1),
                     items: (c0$List$concat)((c0$Core$Cons)((c0$List$take)($index, $0.items), (c0$Core$Cons)((c0$List$drop)(($index + 1), $0.items), c0$Core$Nil))),
                   }));
-                }))()
-                : ((($msg)[0] === "$OnDeleteAll")
-                  ? ((() => {
+                }))())), ($eff = (__re__)[1]), (__re__)[0]);
+              }))()
+              : ((($msg)[0] === "$OnAddTarget")
+                ? ((() => {
+                  const $target = ({
+                    kCal: 800,
+                    protein: 36,
+                  });
+                  return ((__re__ = (u0$Totals$saveItems)($eff, ((() => {
                     const $0 = $model;
                     return (Object.assign)({}, $0, ({
-                      deleteAllMode: false,
-                      items: c0$Core$Nil,
+                      items: (c0$Core$Cons)((u0$Item$Target)($target), $model.items),
                     }));
-                  }))()
-                  : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 69:4', (sp_toHuman)($msg))))))))),
+                  }))())), ($eff = (__re__)[1]), (__re__)[0]);
+                }))()
+                : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 68:4', (sp_toHuman)($msg)))))))),
+    $eff,
+  ]);
+});
+
+const u0$Totals$updateOnAddFood = (($eff, $food, $model) => {
+  const $item = ({
+    kCalPercent: $food.kCalPercent,
+    name: $food.name,
+    proteinPercent: $food.proteinPercent,
+    quantity: $food.defaultQuantity,
+  });
+  return ([
+    ((__re__ = (u0$Totals$saveItems)($eff, ((() => {
+      const $0 = $model;
+      return (Object.assign)({}, $0, ({
+        items: (c0$Core$Cons)((u0$Item$Food)($item), $model.items),
+      }));
+    }))())), ($eff = (__re__)[1]), (__re__)[0]),
     $eff,
   ]);
 });
@@ -2010,7 +2077,7 @@ const u0$App$update = (($eff, $msg, $model) => {
         ? ((() => {
           const $0 = $model;
           return (Object.assign)({}, $0, ({
-            page: (u0$App$PageTotals)(((__re__ = (u0$Totals$init)($eff, u0$App$OnTotalsMsg, $model.items)), ($eff = (__re__)[1]), (__re__)[0])),
+            page: u0$App$PageTotals,
           }));
         }))()
         : ((($4.first)[0] === "$OnCreateNewFood")
@@ -2097,18 +2164,10 @@ const u0$App$update = (($eff, $msg, $model) => {
                   : ((($4.first)[0] === "$OnEditUse")
                     ? ((() => {
                       const $food = ($4.first)[1];
-                      const $item = ({
-                        kCalPercent: $food.kCalPercent,
-                        name: $food.name,
-                        proteinPercent: $food.proteinPercent,
-                        quantity: $food.defaultQuantity,
-                      });
-                      const $items = (c0$Core$Cons)($item, $model.items);
-                      ((__re__ = (virtualDom_setLocalStorage)($eff, "items", (u0$Item$itemsToText)($items))), ($eff = (__re__)[1]), (__re__)[0]);
                       const $0 = $model;
                       return (Object.assign)({}, $0, ({
-                        items: $items,
-                        page: (u0$App$PageTotals)(((__re__ = (u0$Totals$init)($eff, u0$App$OnTotalsMsg, $items)), ($eff = (__re__)[1]), (__re__)[0])),
+                        page: u0$App$PageTotals,
+                        totals: ((__re__ = (u0$Totals$updateOnAddFood)($eff, $food, $model.totals)), ($eff = (__re__)[1]), (__re__)[0]),
                       }));
                     }))()
                     : (((($4.first)[0] === "$OnPickerMsg") && (($4.second)[0] === "$PagePicker"))
@@ -2120,23 +2179,13 @@ const u0$App$update = (($eff, $msg, $model) => {
                           page: (u0$App$PagePicker)((u0$Picker$update)($subMsg, $model.foods, $subModel)),
                         }));
                       }))()
-                      : (((($4.first)[0] === "$OnTotalsMsg") && (($4.second)[0] === "$PageTotals"))
+                      : ((($4.first)[0] === "$OnTotalsMsg")
                         ? ((() => {
                           const $subMsg = ($4.first)[1];
-                          const $subModelWithOldItems = ($4.second)[1];
-                          const $newSubModel = ((__re__ = (u0$Totals$update)($eff, $subMsg, ((() => {
-                            const $0 = $subModelWithOldItems;
-                            return (Object.assign)({}, $0, ({
-                              items: $model.items,
-                            }));
-                          }))())), ($eff = (__re__)[1]), (__re__)[0]);
-                          ((sp_not_equal)($newSubModel.items, $model.items)
-                            ? ((__re__ = (virtualDom_setLocalStorage)($eff, "items", (u0$Item$itemsToText)($newSubModel.items))), ($eff = (__re__)[1]), (__re__)[0])
-                            : null);
+                          const $totals = ((__re__ = (u0$Totals$update)($eff, $subMsg, $model.totals)), ($eff = (__re__)[1]), (__re__)[0]);
                           const $0 = $model;
                           return (Object.assign)({}, $0, ({
-                            items: $newSubModel.items,
-                            page: (u0$App$PageTotals)($newSubModel),
+                            totals: $totals,
                           }));
                         }))()
                         : (sp_throw)('Missing pattern in try..as', 'src/App.sp 63:4', (sp_toHuman)($4)))))))))))),
@@ -2151,20 +2200,20 @@ const u0$UI$bottomRow = (($content) => {
 const u0$UI$buttonRound = (($1) => {
   const $onClick = $1.onClick;
   const $symbol = $1.symbol;
-  return (i1$Html$button)((c0$Core$Cons)((i1$Html$style)("border-radius", "50%"), (c0$Core$Cons)((i1$Html$style)("width", "150px"), (c0$Core$Cons)((i1$Html$style)("height", "150px"), (c0$Core$Cons)((i1$Html$style)("font-size", "200%"), (c0$Core$Cons)((i1$Html$style)("display", "flex"), (c0$Core$Cons)((i1$Html$style)("align-items", "center"), (c0$Core$Cons)((i1$Html$style)("justify-content", "center"), (c0$Core$Cons)((i1$Html$onClick)($onClick), c0$Core$Nil)))))))), (c0$Core$Cons)($symbol, c0$Core$Nil));
+  return (i1$Html$button)((c0$Core$Cons)((i1$Html$style)("border-radius", "50%"), (c0$Core$Cons)((i1$Html$style)("width", "15vw"), (c0$Core$Cons)((i1$Html$style)("height", "15vw"), (c0$Core$Cons)((i1$Html$style)("font-size", "15vw"), (c0$Core$Cons)((i1$Html$style)("display", "flex"), (c0$Core$Cons)((i1$Html$style)("align-items", "center"), (c0$Core$Cons)((i1$Html$style)("justify-content", "center"), (c0$Core$Cons)((i1$Html$onClick)($onClick), c0$Core$Nil)))))))), (c0$Core$Cons)($symbol, c0$Core$Nil));
 });
 
 const u0$UI$buttonBack = (($onClick) => {
   return (u0$UI$buttonRound)(({
     onClick: $onClick,
-    symbol: (i1$Html$div)((c0$Core$Cons)((i1$Html$style)("padding-bottom", "18px"), (c0$Core$Cons)((i1$Html$style)("padding-right", "18px"), (c0$Core$Cons)((i1$Html$style)("font-size", "0.8em"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("◂"), c0$Core$Nil)),
+    symbol: (i1$Html$div)((c0$Core$Cons)((i1$Html$style)("padding-bottom", "10px"), (c0$Core$Cons)((i1$Html$style)("padding-right", "10px"), (c0$Core$Cons)((i1$Html$style)("font-size", "0.8em"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("◂"), c0$Core$Nil)),
   }));
 });
 
 const u0$UI$buttonTrash = (($onClick) => {
   return (u0$UI$buttonRound)(({
     onClick: $onClick,
-    symbol: (i1$Html$img)((c0$Core$Cons)((i1$Html$style)("width", "1em"), (c0$Core$Cons)((i1$Html$src)("images/trash.svg"), c0$Core$Nil))),
+    symbol: (i1$Html$img)((c0$Core$Cons)((i1$Html$style)("height", "8vw"), (c0$Core$Cons)((i1$Html$src)("images/trash.svg"), c0$Core$Nil))),
   }));
 });
 
@@ -2178,14 +2227,14 @@ const u0$EditFood$viewEditor = (($embed, $model) => {
     return ($embed)((u0$EditFood$OnProInput)($0));
   })), (c0$Core$Cons)((i1$Html$value)($model.proteinPercent), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "number"), (c0$Core$Cons)((i1$Html$style)("width", "3em"), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("ml0 text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("%"), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Quantity"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$span)((c0$Core$Cons)((i1$Html$class)("align-center nowrap"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$onInput)((($0) => {
     return ($embed)((u0$EditFood$OnQtyInput)($0));
-  })), (c0$Core$Cons)((i1$Html$value)($model.defaultQuantity), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "number"), (c0$Core$Cons)((i1$Html$style)("width", "3em"), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("ml0 text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("g"), c0$Core$Nil)), c0$Core$Nil))), c0$Core$Nil))))))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mt1"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-sm text-red"), c0$Core$Nil), (c0$Core$Cons)(((($validationResult)[0] === "$Ok")
+  })), (c0$Core$Cons)((i1$Html$value)($model.defaultQuantity), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "number"), (c0$Core$Cons)((i1$Html$style)("width", "3em"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("autofocus", ""), c0$Core$Nil)))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("ml0 text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("g"), c0$Core$Nil)), c0$Core$Nil))), c0$Core$Nil))))))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mt1"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-sm text-red"), c0$Core$Nil), (c0$Core$Cons)(((($validationResult)[0] === "$Ok")
     ? i1$Html$none
     : ((($validationResult)[0] === "$Err")
       ? ((() => {
         const $message = ($validationResult)[1];
         return (i1$Html$text)($message);
       }))()
-      : (sp_throw)('Missing pattern in try..as', 'src/EditFood.sp 250:18', (sp_toHuman)($validationResult)))), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row justify-around"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$button)((c0$Core$Cons)((i1$Html$onClick)(($embed)(u0$EditFood$OnClickSave)), (c0$Core$Cons)((i1$Html$classIf)(((c0$Basics$not)($model.hasChanged) || (c0$Result$isErr)($validationResult)), "disabled"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Save"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$button)((c0$Core$Cons)((i1$Html$onClick)(($embed)(u0$EditFood$OnClickUse)), (c0$Core$Cons)((i1$Html$classIf)((c0$Result$isErr)($validationResult), "disabled"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Use"), c0$Core$Nil)), c0$Core$Nil))), c0$Core$Nil))), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((i1$Html$viewMaybe)($model.maybeId, (($0) => {
+      : (sp_throw)('Missing pattern in try..as', 'src/EditFood.sp 251:18', (sp_toHuman)($validationResult)))), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row justify-around"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$button)((c0$Core$Cons)((i1$Html$onClick)(($embed)(u0$EditFood$OnClickSave)), (c0$Core$Cons)((i1$Html$classIf)(((c0$Basics$not)($model.hasChanged) || (c0$Result$isErr)($validationResult)), "disabled"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Save"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$button)((c0$Core$Cons)((i1$Html$onClick)(($embed)(u0$EditFood$OnClickUse)), (c0$Core$Cons)((i1$Html$classIf)((c0$Result$isErr)($validationResult), "disabled"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Use"), c0$Core$Nil)), c0$Core$Nil))), c0$Core$Nil))), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((i1$Html$viewMaybe)($model.maybeId, (($0) => {
     return (u0$UI$buttonTrash)(($embed)((u0$EditFood$OnClickDelete)($0)));
   })), (c0$Core$Cons)((u0$UI$buttonBack)(($embed)(u0$EditFood$OnClickBack)), c0$Core$Nil))), c0$Core$Nil))));
 });
@@ -2199,7 +2248,7 @@ const u0$EditFood$view = (($embed, $model) => {
         const $id = ($3)[1];
         return (i1$Html$div)((c0$Core$Cons)((i1$Html$style)("padding-bottom", "250px"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100 col align-center gap1"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$text)($model.name), c0$Core$Nil)), (c0$Core$Cons)((u0$UI$buttonTrash)(($embed)((u0$EditFood$OnConfirmDeletion)($id))), c0$Core$Nil))), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((u0$UI$buttonBack)(($embed)(u0$EditFood$OnClickBack)), c0$Core$Nil)), c0$Core$Nil)));
       }))()
-      : (sp_throw)('Missing pattern in try..as', 'src/EditFood.sp 282:4', (sp_toHuman)($3))));
+      : (sp_throw)('Missing pattern in try..as', 'src/EditFood.sp 283:4', (sp_toHuman)($3))));
 });
 
 const u0$Picker$filter = (($model) => {
@@ -2239,13 +2288,47 @@ const u0$Totals$formatNumber = (($0) => {
   return (c0$Text$join)("", (c0$List$take)(1, (text_split)(".", (text_fromNumber)($0))));
 });
 
-const u0$Totals$itemKCal = (($item) => {
-  return (sp_divide)(($item.quantity * $item.kCalPercent), 100);
+const u0$Totals$itemKCal = (($0) => {
+  const $2 = $0;
+  return ((($2)[0] === "$Food")
+    ? ((() => {
+      const $food = ($2)[1];
+      return (sp_divide)(($food.quantity * $food.kCalPercent), 100);
+    }))()
+    : ((($2)[0] === "$Target")
+      ? ((() => {
+        const $target = ($2)[1];
+        return -($target.kCal);
+      }))()
+      : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 175:4', (sp_toHuman)($2))));
 });
 
-const u0$Totals$itemPro = (($item) => {
-  return (sp_divide)(($item.quantity * $item.proteinPercent), 100);
+const u0$Totals$itemPro = (($0) => {
+  const $2 = $0;
+  return ((($2)[0] === "$Food")
+    ? ((() => {
+      const $food = ($2)[1];
+      return (sp_divide)(($food.quantity * $food.proteinPercent), 100);
+    }))()
+    : ((($2)[0] === "$Target")
+      ? ((() => {
+        const $target = ($2)[1];
+        return -($target.protein);
+      }))()
+      : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 169:4', (sp_toHuman)($2))));
 });
+
+const u0$Totals$s = i1$Html$style;
+
+const u0$Totals$kCalWidth = (u0$Totals$s)("width", "13%");
+
+const u0$Totals$nameWidth = (u0$Totals$s)("width", "53%");
+
+const u0$Totals$p = (u0$Totals$s)("padding", "1%");
+
+const u0$Totals$proWidth = (u0$Totals$s)("width", "13%");
+
+const u0$Totals$quantityWidth = (u0$Totals$s)("width", "13%");
 
 const u0$UI$buttonRoundSmall = (($1) => {
   const $onClick = $1.onClick;
@@ -2260,61 +2343,71 @@ const u0$UI$buttonTrashSmall = (($onClick) => {
   }));
 });
 
-const u0$Totals$viewIntake = (($embed, $onAdd, $items, $model) => {
-  const $target = ({
-    kCal: 850,
-    pro: 150,
+const u0$Totals$viewFoodItem = (($embed, $model, $isExpanded, $index, $item) => {
+  return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col"), (c0$Core$Cons)((i1$Html$classIf)($isExpanded, "border mb1"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$button)((c0$Core$Cons)((i1$Html$class)("list row"), (c0$Core$Cons)((i1$Html$onClick)(($embed)((u0$Totals$OnToggleExpansion)($index))), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("justify-end"), (c0$Core$Cons)(u0$Totals$quantityWidth, (c0$Core$Cons)(u0$Totals$p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($item.quantity)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center text-left"), (c0$Core$Cons)(u0$Totals$nameWidth, (c0$Core$Cons)(u0$Totals$p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)($item.name), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)(u0$Totals$kCalWidth, (c0$Core$Cons)(u0$Totals$p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((u0$Totals$itemKCal)((u0$Item$Food)($item)))), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)(u0$Totals$proWidth, (c0$Core$Cons)(u0$Totals$p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((u0$Totals$itemPro)((u0$Item$Food)($item)))), c0$Core$Nil)), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$viewIf)($isExpanded, ((_0) => {
+    return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row align-center mr1 ml1"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("flex1 ml0 mr0"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
+      return ($embed)((u0$Totals$OnQuantityInput)($index, u0$Totals$FoodQuantity, $0));
+    })), (c0$Core$Cons)((i1$Html$value)($model.inputNumberAsText), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("id", "quantity"), c0$Core$Nil))))), c0$Core$Nil));
+  })), (c0$Core$Cons)((i1$Html$viewIf)($isExpanded, ((_0) => {
+    return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row mt1 mr1 ml1 mb0"), c0$Core$Nil), (c0$Core$Cons)((u0$UI$buttonTrashSmall)(($embed)((u0$Totals$OnRemove)($index))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col ml1 text-right"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$span)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($item.kCalPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$span)((c0$Core$Cons)((i1$Html$class)("text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)(" kCal/100g"), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$span)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($item.proteinPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$span)((c0$Core$Cons)((i1$Html$class)("text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)(" pro/100g"), c0$Core$Nil)), c0$Core$Nil))), c0$Core$Nil))), c0$Core$Nil)));
+  })), c0$Core$Nil))));
+});
+
+const u0$Totals$viewTarget = (($embed, $isExpanded, $index, $target) => {
+  return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col mb0"), (c0$Core$Cons)((i1$Html$classIf)($isExpanded, "border"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row text-green"), (c0$Core$Cons)((i1$Html$style)("color", "#f6f6f6"), (c0$Core$Cons)((i1$Html$style)("background-color", "#2aad09"), (c0$Core$Cons)((i1$Html$onClick)(($embed)((u0$Totals$OnToggleExpansion)($index))), c0$Core$Nil)))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)(u0$Totals$quantityWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)(u0$Totals$nameWidth, (c0$Core$Cons)((i1$Html$class)("text-sm justify-end align-center pr"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Target"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)(u0$Totals$kCalWidth, (c0$Core$Cons)(u0$Totals$p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($target.kCal)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)(u0$Totals$proWidth, (c0$Core$Cons)(u0$Totals$p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($target.protein)), c0$Core$Nil)), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$viewIf)($isExpanded, ((_0) => {
+    return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col mt0 ml1 mr1 mb1"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("kCal target"), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("flex1"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
+      return ($embed)((u0$Totals$OnQuantityInput)($index, u0$Totals$TargetCalories, $0));
+    })), (c0$Core$Cons)((i1$Html$value)((text_fromNumber)($target.kCal)), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "range"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("min", "300"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("max", "3000"), c0$Core$Nil))))))), (c0$Core$Cons)((i1$Html$text)("protein target"), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("flex1"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
+      return ($embed)((u0$Totals$OnQuantityInput)($index, u0$Totals$TargetProtein, $0));
+    })), (c0$Core$Cons)((i1$Html$value)((text_fromNumber)($target.protein)), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "range"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("min", "20"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("max", "200"), c0$Core$Nil))))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mt1"), c0$Core$Nil), (c0$Core$Cons)((u0$UI$buttonTrashSmall)(($embed)((u0$Totals$OnRemove)($index))), c0$Core$Nil)), c0$Core$Nil))))));
+  })), c0$Core$Nil)));
+});
+
+const u0$UI$buttonTarget = (($onClick) => {
+  return (u0$UI$buttonRound)(({
+    onClick: $onClick,
+    symbol: (i1$Html$div)((c0$Core$Cons)((i1$Html$style)("font-size", "11vw"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("t"), c0$Core$Nil)),
+  }));
+});
+
+const u0$Totals$viewIntake = (($embed, $onAdd, $model) => {
+  const $4 = $model;
+  const $items = $4.items;
+  const $viewHeader = (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)(u0$Totals$quantityWidth, (c0$Core$Cons)(u0$Totals$p, (c0$Core$Cons)((i1$Html$class)("bold text-right text-sm"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("g"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)(u0$Totals$nameWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)(u0$Totals$kCalWidth, (c0$Core$Cons)(u0$Totals$p, (c0$Core$Cons)((i1$Html$class)("bold text-right text-sm"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("kCal"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)(u0$Totals$proWidth, (c0$Core$Cons)(u0$Totals$p, (c0$Core$Cons)((i1$Html$class)("bold text-right text-sm"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("Pro"), c0$Core$Nil)), c0$Core$Nil))))), c0$Core$Nil);
+  const $viewItem = (($index, $entry) => {
+    return ((($entry)[0] === "$Food")
+      ? ((() => {
+        const $item = ($entry)[1];
+        return (u0$Totals$viewFoodItem)($embed, $model, (sp_equal)($model.expansion, $index), $index, $item);
+      }))()
+      : ((($entry)[0] === "$Target")
+        ? ((() => {
+          const $target = ($entry)[1];
+          return (u0$Totals$viewTarget)($embed, (sp_equal)($model.expansion, $index), $index, $target);
+        }))()
+        : (sp_throw)('Missing pattern in try..as', 'src/Totals.sp 381:8', (sp_toHuman)($entry))));
   });
-  const $s = i1$Html$style;
-  const $p = ($s)("padding", "1%");
-  const $quantityWidth = ($s)("width", "13%");
-  const $nameWidth = ($s)("width", "53%");
-  const $kCalWidth = ($s)("width", "13%");
-  const $proWidth = ($s)("width", "13%");
-  const $viewHeader = (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($quantityWidth, (c0$Core$Cons)($p, (c0$Core$Cons)((i1$Html$class)("bold text-right text-sm"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("g"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($nameWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($kCalWidth, (c0$Core$Cons)($p, (c0$Core$Cons)((i1$Html$class)("bold text-right text-sm"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("kCal"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($proWidth, (c0$Core$Cons)($p, (c0$Core$Cons)((i1$Html$class)("bold text-right text-sm"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)("Pro"), c0$Core$Nil)), c0$Core$Nil))))), c0$Core$Nil);
-  const $viewItem = (($index, $item) => {
-    return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col"), (c0$Core$Cons)((i1$Html$classIf)((sp_equal)($model.expansion, (u0$Totals$ExpansionItem)($index)), "border mb1"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$button)((c0$Core$Cons)((i1$Html$class)("list row"), (c0$Core$Cons)((i1$Html$onClick)(($embed)((u0$Totals$OnToggleExpansion)((u0$Totals$ExpansionItem)($index)))), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("justify-end"), (c0$Core$Cons)($quantityWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($item.quantity)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center"), (c0$Core$Cons)($nameWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)($item.name), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)($kCalWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((u0$Totals$itemKCal)($item))), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)($proWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)((u0$Totals$itemPro)($item))), c0$Core$Nil)), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$viewIf)((sp_equal)($model.expansion, (u0$Totals$ExpansionItem)($index)), ((_0) => {
-      return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row align-center mr1 ml1"), c0$Core$Nil), (c0$Core$Cons)((u0$UI$buttonRoundSmall)(({
-        onClick: ($embed)((u0$Totals$OnQuantityInput)($index, (text_fromNumber)(($item.quantity - 1)))),
-        symbol: (i1$Html$text)("-"),
-      })), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("flex1 ml0 mr0"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
-        return ($embed)((u0$Totals$OnQuantityInput)($index, $0));
-      })), (c0$Core$Cons)((i1$Html$value)((text_fromNumber)($item.quantity)), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "range"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("min", "1"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("max", "300"), c0$Core$Nil))))))), (c0$Core$Cons)((u0$UI$buttonRoundSmall)(({
-        onClick: ($embed)((u0$Totals$OnQuantityInput)($index, (text_fromNumber)(($item.quantity + 1)))),
-        symbol: (i1$Html$text)("+"),
-      })), c0$Core$Nil))));
-    })), (c0$Core$Cons)((i1$Html$viewIf)((sp_equal)($model.expansion, (u0$Totals$ExpansionItem)($index)), ((_0) => {
-      return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row mt1 mr1 ml1 mb0"), c0$Core$Nil), (c0$Core$Cons)((u0$UI$buttonTrashSmall)(($embed)((u0$Totals$OnRemove)($index))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col ml1 text-right"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$span)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($item.kCalPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$span)((c0$Core$Cons)((i1$Html$class)("text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)(" kCal/100g"), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$span)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($item.proteinPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$span)((c0$Core$Cons)((i1$Html$class)("text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)(" pro/100g"), c0$Core$Nil)), c0$Core$Nil))), c0$Core$Nil))), c0$Core$Nil)));
-    })), c0$Core$Nil))));
-  });
-  const $viewTarget = (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col"), (c0$Core$Cons)((i1$Html$classIf)((sp_equal)($model.expansion, u0$Totals$ExpansionTargets), "border mb1"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row text-green"), (c0$Core$Cons)((i1$Html$style)("color", "#f6f6f6"), (c0$Core$Cons)((i1$Html$style)("background-color", "#2aad09"), (c0$Core$Cons)((i1$Html$onClick)(($embed)((u0$Totals$OnToggleExpansion)(u0$Totals$ExpansionTargets))), c0$Core$Nil)))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($quantityWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($nameWidth, (c0$Core$Cons)((i1$Html$class)("text-sm justify-end align-center pr"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Target"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)($kCalWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($model.kCalTarget)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center justify-end"), (c0$Core$Cons)($proWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($model.proTarget)), c0$Core$Nil)), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$viewIf)((sp_equal)($model.expansion, u0$Totals$ExpansionTargets), ((_0) => {
-    return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("col mt0 ml0 mr0"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("kCal target"), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("flex1"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
-      return ($embed)((u0$Totals$OnUserSetsTarget)(u0$Totals$kCalTargetName, $0));
-    })), (c0$Core$Cons)((i1$Html$value)((text_fromNumber)($model.kCalTarget)), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "range"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("min", "300"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("max", "3000"), c0$Core$Nil))))))), (c0$Core$Cons)((i1$Html$text)("protein target"), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$class)("flex1"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
-      return ($embed)((u0$Totals$OnUserSetsTarget)(u0$Totals$proTargetName, $0));
-    })), (c0$Core$Cons)((i1$Html$value)((text_fromNumber)($model.proTarget)), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("type", "range"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("min", "20"), (c0$Core$Cons)((i1$VirtualDom$DomAttribute)("max", "200"), c0$Core$Nil))))))), c0$Core$Nil)))));
-  })), c0$Core$Nil))), c0$Core$Nil);
   const $viewTotals = ((() => {
-    const $availableKCal = ($model.kCalTarget - (c0$List$for)(0, $items, (($t, $item) => {
-      return ($t + (u0$Totals$itemKCal)($item));
-    })));
-    const $availablePro = ($model.proTarget - (c0$List$for)(0, $items, (($t, $item) => {
-      return ($t + (u0$Totals$itemPro)($item));
-    })));
-    return (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($quantityWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)($nameWidth, (c0$Core$Cons)((i1$Html$class)("bold text-sm justify-end align-center pr"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Available"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), (c0$Core$Cons)((i1$Html$classIf)(($availableKCal < 0), "text-red"), (c0$Core$Cons)($kCalWidth, (c0$Core$Cons)($p, c0$Core$Nil)))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($availableKCal)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), (c0$Core$Cons)($proWidth, (c0$Core$Cons)($p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($availablePro)), c0$Core$Nil)), c0$Core$Nil))))), c0$Core$Nil);
+    const $availableKCal = (c0$List$for)(0, $items, (($t, $item) => {
+      return ($t - (u0$Totals$itemKCal)($item));
+    }));
+    const $availablePro = (c0$List$for)(0, $items, (($t, $item) => {
+      return ($t - (u0$Totals$itemPro)($item));
+    }));
+    return (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)(u0$Totals$quantityWidth, c0$Core$Nil), c0$Core$Nil), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)(u0$Totals$nameWidth, (c0$Core$Cons)((i1$Html$class)("bold text-sm justify-end align-center pr"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Available"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), (c0$Core$Cons)((i1$Html$classIf)(($availableKCal < 0), "text-red"), (c0$Core$Cons)(u0$Totals$kCalWidth, (c0$Core$Cons)(u0$Totals$p, c0$Core$Nil)))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($availableKCal)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("bold align-center justify-end"), (c0$Core$Cons)(u0$Totals$proWidth, (c0$Core$Cons)(u0$Totals$p, c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)((u0$Totals$formatNumber)($availablePro)), c0$Core$Nil)), c0$Core$Nil))))), c0$Core$Nil);
   }))();
   const $viewItems = ((sp_equal)($items, c0$Core$Nil)
     ? (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mt1 pt mb1 pb justify-center text-sm"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("No entries"), c0$Core$Nil)), c0$Core$Nil)
     : (c0$List$reverse)((c0$List$mapWithIndex)($items, $viewItem)));
-  return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$h1)((c0$Core$Cons)((i1$Html$class)("w100 justify-center"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Intake"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$List$concat)((c0$Core$Cons)($viewHeader, (c0$Core$Cons)($viewItems, (c0$Core$Cons)($viewTarget, (c0$Core$Cons)($viewTotals, c0$Core$Nil)))))), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((i1$Html$viewIf)((sp_not_equal)($items, c0$Core$Nil), ((_0) => {
+  return (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$h1)((c0$Core$Cons)((i1$Html$class)("w100 justify-center"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Intake"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("w100"), c0$Core$Nil), (c0$List$concat)((c0$Core$Cons)($viewHeader, (c0$Core$Cons)($viewItems, (c0$Core$Cons)($viewTotals, c0$Core$Nil))))), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((i1$Html$viewIf)((sp_not_equal)($items, c0$Core$Nil), ((_0) => {
     return (u0$UI$buttonTrash)(($embed)((u0$Totals$OnDeleteAllMode)(true)));
-  })), (c0$Core$Cons)((u0$UI$buttonAdd)($onAdd), c0$Core$Nil))), c0$Core$Nil))));
+  })), (c0$Core$Cons)((u0$UI$buttonTarget)(($embed)(u0$Totals$OnAddTarget)), (c0$Core$Cons)((u0$UI$buttonAdd)($onAdd), c0$Core$Nil)))), c0$Core$Nil))));
 });
 
-const u0$Totals$view = (($embed, $onAdd, $items, $model) => {
+const u0$Totals$view = (($embed, $onAdd, $model) => {
   return ($model.deleteAllMode
     ? (u0$Totals$viewDeleteAll)($embed)
-    : (u0$Totals$viewIntake)($embed, $onAdd, $items, $model));
+    : (u0$Totals$viewIntake)($embed, $onAdd, $model));
 });
 
 const u0$App$view = (($model) => {
@@ -2335,11 +2428,8 @@ const u0$App$view = (($model) => {
         }), $model.foods, $subModel);
       }))()
       : ((($2)[0] === "$PageTotals")
-        ? ((() => {
-          const $subModel = ($2)[1];
-          return (u0$Totals$view)(u0$App$OnTotalsMsg, u0$App$OnClickOpenPicker, $model.items, $subModel);
-        }))()
-        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 163:4', (sp_toHuman)($2)))));
+        ? (u0$Totals$view)(u0$App$OnTotalsMsg, u0$App$OnClickOpenPicker, $model.totals)
+        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 141:4', (sp_toHuman)($2)))));
 });
 
 const u0$App$main = ({

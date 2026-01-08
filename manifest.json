@@ -1,15 +1,24 @@
 {
-  "short_name": "Calories",
-  "name": "Calories & protein counter",
-  "icons": [
-    {
-      "src": "/favicon.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "black",
-  "background_color": "white"
+    "short_name": "Calories",
+    "name": "Calorie Counter",
+    "icons": [
+        {
+            "src": "./calco-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./calco-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "./calco.svg",
+            "type": "image/svg"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#2aad09",
+    "background_color": "#f1f1f1"
 }
