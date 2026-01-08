@@ -765,6 +765,15 @@ const u0$App$OnEditUse = (($1) => ([
   $1,
 ]));
 
+const u0$App$OnImportExport = ([
+  "$OnImportExport",
+]);
+
+const u0$App$OnImportExportMsg = (($1) => ([
+  "$OnImportExportMsg",
+  $1,
+]));
+
 const u0$App$OnPickerCancel = ([
   "$OnPickerCancel",
 ]);
@@ -781,6 +790,11 @@ const u0$App$OnTotalsMsg = (($1) => ([
 
 const u0$App$PageEditFood = (($1) => ([
   "$PageEditFood",
+  $1,
+]));
+
+const u0$App$PageImportExport = (($1) => ([
+  "$PageImportExport",
   $1,
 ]));
 
@@ -832,6 +846,15 @@ const u0$EditFood$OnProInput = (($1) => ([
 
 const u0$EditFood$OnQtyInput = (($1) => ([
   "$OnQtyInput",
+  $1,
+]));
+
+const u0$ImportExport$OnClickImport = ([
+  "$OnClickImport",
+]);
+
+const u0$ImportExport$OnTextInput = (($1) => ([
+  "$OnTextInput",
   $1,
 ]));
 
@@ -1231,6 +1254,12 @@ const i1$Html$classIf = (($p, $content) => {
     : i1$VirtualDom$Void);
 });
 
+const i1$Html$disabled = (($flag) => {
+  return ($flag
+    ? (i1$VirtualDom$DomProperty)("disabled", "true")
+    : i1$VirtualDom$Void);
+});
+
 const i1$Html$div = (($0, $1) => {
   return (i1$VirtualDom$ElementNode)("div", $0, $1);
 });
@@ -1249,6 +1278,10 @@ const i1$Html$img = (($0) => {
 
 const i1$Html$input = (($0) => {
   return (i1$VirtualDom$ElementNode)("input", $0, c0$Core$Nil);
+});
+
+const i1$Html$node = (($0, $1, $2) => {
+  return (i1$VirtualDom$ElementNode)($0, $1, $2);
 });
 
 const i1$Html$none = (i1$VirtualDom$TextNode)("");
@@ -1854,6 +1887,32 @@ const u0$EditFood$update = (($config, $eff, $msg, $model) => {
   ]);
 });
 
+const u0$ImportExport$init = (($foods) => {
+  return (u0$Food$foodsToText)($foods);
+});
+
+const u0$ImportExport$update = (($eff, $msg, $model) => {
+  return ([
+    ((($msg)[0] === "$OnTextInput")
+      ? ((() => {
+        const $value = ($msg)[1];
+        return $value;
+      }))()
+      : ((($msg)[0] === "$OnClickImport")
+        ? ((() => {
+          const $4 = (u0$Food$textToFoods)($model);
+          ((($4)[0] === "$Nil")
+            ? null
+            : (true
+              ? ((__re__ = (virtualDom_setLocalStorage)($eff, "foods", $model)), ($eff = (__re__)[1]), (__re__)[0])
+              : (sp_throw)('Missing pattern in try..as', 'src/ImportExport.sp 23:12', (sp_toHuman)($4))));
+          return $model;
+        }))()
+        : (sp_throw)('Missing pattern in try..as', 'src/ImportExport.sp 17:4', (sp_toHuman)($msg)))),
+    $eff,
+  ]);
+});
+
 const u0$Picker$init = (($eff) => {
   ((__re__ = (virtualDom_focus)($eff, "#search")), ($eff = (__re__)[1]), (__re__)[0]);
   return ([
@@ -2088,107 +2147,122 @@ const u0$App$update = (($eff, $msg, $model) => {
               page: (u0$App$PageEditFood)((u0$EditFood$initNew)($name)),
             }));
           }))()
-          : ((($4.first)[0] === "$OnEditFood")
+          : ((($4.first)[0] === "$OnImportExport")
             ? ((() => {
-              const $id = ($4.first)[1];
               const $0 = $model;
               return (Object.assign)({}, $0, ({
-                page: (u0$App$PageEditFood)(((__re__ = (u0$EditFood$initEdit)($eff, $id, $model.foods)), ($eff = (__re__)[1]), (__re__)[0])),
+                page: (u0$App$PageImportExport)((u0$ImportExport$init)($model.foods)),
               }));
             }))()
-            : (((($4.first)[0] === "$OnEditFoodMsg") && (($4.second)[0] === "$PageEditFood"))
+            : ((($4.first)[0] === "$OnEditFood")
               ? ((() => {
-                const $subMsg = ($4.first)[1];
-                const $subModel = ($4.second)[1];
+                const $id = ($4.first)[1];
                 const $0 = $model;
                 return (Object.assign)({}, $0, ({
-                  page: (u0$App$PageEditFood)(((__re__ = (u0$EditFood$update)(({
-                    deleteFood: u0$App$OnEditDelete,
-                    goBack: u0$App$OnClickOpenPicker,
-                    saveFood: u0$App$OnEditSave,
-                    useFood: u0$App$OnEditUse,
-                  }), $eff, $subMsg, $subModel)), ($eff = (__re__)[1]), (__re__)[0])),
+                  page: (u0$App$PageEditFood)(((__re__ = (u0$EditFood$initEdit)($eff, $id, $model.foods)), ($eff = (__re__)[1]), (__re__)[0])),
                 }));
               }))()
-              : ((($4.first)[0] === "$OnEditDelete")
+              : (((($4.first)[0] === "$OnEditFoodMsg") && (($4.second)[0] === "$PageEditFood"))
                 ? ((() => {
-                  const $id = ($4.first)[1];
-                  const $foods = (c0$List$filter)($model.foods, (($f) => {
-                    return (sp_not_equal)($f.id, $id);
-                  }));
-                  ((__re__ = (u0$App$saveFoods)($eff, $foods)), ($eff = (__re__)[1]), (__re__)[0]);
+                  const $subMsg = ($4.first)[1];
+                  const $subModel = ($4.second)[1];
                   const $0 = $model;
                   return (Object.assign)({}, $0, ({
-                    foods: $foods,
-                    page: (u0$App$PagePicker)(((__re__ = (u0$Picker$init)($eff)), ($eff = (__re__)[1]), (__re__)[0])),
+                    page: (u0$App$PageEditFood)(((__re__ = (u0$EditFood$update)(({
+                      deleteFood: u0$App$OnEditDelete,
+                      goBack: u0$App$OnClickOpenPicker,
+                      saveFood: u0$App$OnEditSave,
+                      useFood: u0$App$OnEditUse,
+                    }), $eff, $subMsg, $subModel)), ($eff = (__re__)[1]), (__re__)[0])),
                   }));
                 }))()
-                : (((($4.first)[0] === "$OnEditSave") && (($4.second)[0] === "$PageEditFood"))
+                : ((($4.first)[0] === "$OnEditDelete")
                   ? ((() => {
-                    const $food = ($4.first)[1];
-                    const $updateEditModel = ($4.first)[2];
-                    const $subModel = ($4.second)[1];
-                    const $5 = ((sp_not_equal)($food.id, -(1))
-                      ? ({
-                        first: $food.id,
-                        second: (c0$List$update)($model.foods, (($f) => {
-                          return (sp_equal)($f.id, $food.id);
-                        }), ((_0) => {
-                          return $food;
-                        })),
-                      })
-                      : ((() => {
-                        const $id_ = (c0$Maybe$withDefault)((c0$List$maximum)((c0$List$map)($model.foods, (($f) => {
-                          return $f.id;
-                        }))), 0);
-                        const $foods_ = (c0$Core$Cons)(((() => {
-                          const $0 = $food;
-                          return (Object.assign)({}, $0, ({
-                            id: $id_,
-                          }));
-                        }))(), $model.foods);
-                        return ({
-                          first: $id_,
-                          second: $foods_,
-                        });
-                      }))());
-                    const $foods = $5.second;
-                    const $id = $5.first;
+                    const $id = ($4.first)[1];
+                    const $foods = (c0$List$filter)($model.foods, (($f) => {
+                      return (sp_not_equal)($f.id, $id);
+                    }));
                     ((__re__ = (u0$App$saveFoods)($eff, $foods)), ($eff = (__re__)[1]), (__re__)[0]);
                     const $0 = $model;
                     return (Object.assign)({}, $0, ({
                       foods: $foods,
-                      page: (u0$App$PageEditFood)(($updateEditModel)($id, $subModel)),
+                      page: (u0$App$PagePicker)(((__re__ = (u0$Picker$init)($eff)), ($eff = (__re__)[1]), (__re__)[0])),
                     }));
                   }))()
-                  : ((($4.first)[0] === "$OnEditUse")
+                  : (((($4.first)[0] === "$OnEditSave") && (($4.second)[0] === "$PageEditFood"))
                     ? ((() => {
                       const $food = ($4.first)[1];
+                      const $updateEditModel = ($4.first)[2];
+                      const $subModel = ($4.second)[1];
+                      const $5 = ((sp_not_equal)($food.id, -(1))
+                        ? ({
+                          first: $food.id,
+                          second: (c0$List$update)($model.foods, (($f) => {
+                            return (sp_equal)($f.id, $food.id);
+                          }), ((_0) => {
+                            return $food;
+                          })),
+                        })
+                        : ((() => {
+                          const $id_ = (c0$Maybe$withDefault)((c0$List$maximum)((c0$List$map)($model.foods, (($f) => {
+                            return $f.id;
+                          }))), 0);
+                          const $foods_ = (c0$Core$Cons)(((() => {
+                            const $0 = $food;
+                            return (Object.assign)({}, $0, ({
+                              id: $id_,
+                            }));
+                          }))(), $model.foods);
+                          return ({
+                            first: $id_,
+                            second: $foods_,
+                          });
+                        }))());
+                      const $foods = $5.second;
+                      const $id = $5.first;
+                      ((__re__ = (u0$App$saveFoods)($eff, $foods)), ($eff = (__re__)[1]), (__re__)[0]);
                       const $0 = $model;
                       return (Object.assign)({}, $0, ({
-                        page: u0$App$PageTotals,
-                        totals: ((__re__ = (u0$Totals$updateOnAddFood)($eff, $food, $model.totals)), ($eff = (__re__)[1]), (__re__)[0]),
+                        foods: $foods,
+                        page: (u0$App$PageEditFood)(($updateEditModel)($id, $subModel)),
                       }));
                     }))()
-                    : (((($4.first)[0] === "$OnPickerMsg") && (($4.second)[0] === "$PagePicker"))
+                    : ((($4.first)[0] === "$OnEditUse")
                       ? ((() => {
-                        const $subMsg = ($4.first)[1];
-                        const $subModel = ($4.second)[1];
+                        const $food = ($4.first)[1];
                         const $0 = $model;
                         return (Object.assign)({}, $0, ({
-                          page: (u0$App$PagePicker)((u0$Picker$update)($subMsg, $model.foods, $subModel)),
+                          page: u0$App$PageTotals,
+                          totals: ((__re__ = (u0$Totals$updateOnAddFood)($eff, $food, $model.totals)), ($eff = (__re__)[1]), (__re__)[0]),
                         }));
                       }))()
-                      : ((($4.first)[0] === "$OnTotalsMsg")
+                      : (((($4.first)[0] === "$OnPickerMsg") && (($4.second)[0] === "$PagePicker"))
                         ? ((() => {
                           const $subMsg = ($4.first)[1];
-                          const $totals = ((__re__ = (u0$Totals$update)($eff, $subMsg, $model.totals)), ($eff = (__re__)[1]), (__re__)[0]);
+                          const $subModel = ($4.second)[1];
                           const $0 = $model;
                           return (Object.assign)({}, $0, ({
-                            totals: $totals,
+                            page: (u0$App$PagePicker)((u0$Picker$update)($subMsg, $model.foods, $subModel)),
                           }));
                         }))()
-                        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 63:4', (sp_toHuman)($4)))))))))))),
+                        : ((($4.first)[0] === "$OnTotalsMsg")
+                          ? ((() => {
+                            const $subMsg = ($4.first)[1];
+                            const $0 = $model;
+                            return (Object.assign)({}, $0, ({
+                              totals: ((__re__ = (u0$Totals$update)($eff, $subMsg, $model.totals)), ($eff = (__re__)[1]), (__re__)[0]),
+                            }));
+                          }))()
+                          : (((($4.first)[0] === "$OnImportExportMsg") && (($4.second)[0] === "$PageImportExport"))
+                            ? ((() => {
+                              const $subMsg = ($4.first)[1];
+                              const $subModel = ($4.second)[1];
+                              const $0 = $model;
+                              return (Object.assign)({}, $0, ({
+                                page: (u0$App$PageImportExport)(((__re__ = (u0$ImportExport$update)($eff, $subMsg, $subModel)), ($eff = (__re__)[1]), (__re__)[0])),
+                              }));
+                            }))()
+                            : (sp_throw)('Missing pattern in try..as', 'src/App.sp 66:4', (sp_toHuman)($4)))))))))))))),
     $eff,
   ]);
 });
@@ -2251,6 +2325,13 @@ const u0$EditFood$view = (($embed, $model) => {
       : (sp_throw)('Missing pattern in try..as', 'src/EditFood.sp 283:4', (sp_toHuman)($3))));
 });
 
+const u0$ImportExport$view = (($embed, $model) => {
+  const $inputIsInvalid = (sp_equal)((u0$Food$textToFoods)($model), c0$Core$Nil);
+  return (i1$Html$div)(c0$Core$Nil, (c0$Core$Cons)((i1$Html$text)("This whole system is a horrid hack, don't expect it to work."), (c0$Core$Cons)((i1$Html$node)("textarea", (c0$Core$Cons)((i1$Html$class)("w100"), (c0$Core$Cons)((i1$Html$style)("height", "95vh"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
+    return ($embed)((u0$ImportExport$OnTextInput)($0));
+  })), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$text)($model), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$button)((c0$Core$Cons)((i1$Html$onClick)(($embed)(u0$ImportExport$OnClickImport)), (c0$Core$Cons)((i1$Html$disabled)($inputIsInvalid), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)("Import!"), c0$Core$Nil)), c0$Core$Nil))));
+});
+
 const u0$Picker$filter = (($model) => {
   return (($food) => {
     return (c0$Text$contains)((text_toLower)($model.search), (text_toLower)($food.name));
@@ -2275,9 +2356,11 @@ const u0$UI$buttonAdd = (($onClick) => {
 const u0$Picker$view = (($params, $foods, $model) => {
   return (i1$Html$div)((c0$Core$Cons)((i1$Html$style)("padding-bottom", "250px"), c0$Core$Nil), (c0$Core$Cons)((u0$UI$bottomRow)((c0$Core$Cons)((u0$UI$buttonBack)($params.onCancel), (c0$Core$Cons)((u0$UI$buttonAdd)(($params.onNewFood)($model.search)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("row align-center w100"), (c0$Core$Cons)((i1$Html$style)("position", "relative"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$input)((c0$Core$Cons)((i1$Html$id)("search"), (c0$Core$Cons)((i1$Html$class)("w100"), (c0$Core$Cons)((i1$Html$onInput)((($0) => {
     return ($params.embed)((u0$Picker$OnSearchInput)($0));
-  })), (c0$Core$Cons)((i1$Html$value)($model.search), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center"), (c0$Core$Cons)((i1$Html$style)("position", "absolute"), (c0$Core$Cons)((i1$Html$style)("right", "0.5em"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$img)((c0$Core$Cons)((i1$Html$style)("width", "1.2em"), (c0$Core$Cons)((i1$Html$src)("images/search.svg"), c0$Core$Nil))), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mt0"), c0$Core$Nil), (c0$List$map)((list_sortBy)((u0$Picker$sort)($model), (c0$List$filter)($foods, (u0$Picker$filter)($model))), (($food) => {
-    return (i1$Html$button)((c0$Core$Cons)((i1$Html$class)("list row"), (c0$Core$Cons)((i1$Html$onClick)(($params.onEditFood)($food.id)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-left align-center"), (c0$Core$Cons)((i1$Html$style)("width", "60%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("ml0"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)($food.name), c0$Core$Nil)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-right"), (c0$Core$Cons)((i1$Html$style)("width", "20%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($food.kCalPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-right"), (c0$Core$Cons)((i1$Html$style)("width", "20%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($food.proteinPercent)), c0$Core$Nil)), c0$Core$Nil))));
-  }))), c0$Core$Nil))));
+  })), (c0$Core$Cons)((i1$Html$value)($model.search), c0$Core$Nil))))), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("align-center"), (c0$Core$Cons)((i1$Html$style)("position", "absolute"), (c0$Core$Cons)((i1$Html$style)("right", "0.5em"), c0$Core$Nil))), (c0$Core$Cons)((i1$Html$img)((c0$Core$Cons)((i1$Html$style)("width", "1.2em"), (c0$Core$Cons)((i1$Html$src)("images/search.svg"), c0$Core$Nil))), c0$Core$Nil)), c0$Core$Nil))), (c0$Core$Cons)((((sp_equal)($model.search, "export") || (sp_equal)($model.search, "import"))
+    ? (i1$Html$button)((c0$Core$Cons)((i1$Html$onClick)($params.onImportExport), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("Import/Export"), c0$Core$Nil))
+    : (i1$Html$div)((c0$Core$Cons)((i1$Html$class)("mt0"), c0$Core$Nil), (c0$List$map)((list_sortBy)((u0$Picker$sort)($model), (c0$List$filter)($foods, (u0$Picker$filter)($model))), (($food) => {
+      return (i1$Html$button)((c0$Core$Cons)((i1$Html$class)("list row"), (c0$Core$Cons)((i1$Html$onClick)(($params.onEditFood)($food.id)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-left align-center"), (c0$Core$Cons)((i1$Html$style)("width", "60%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("ml0"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)($food.name), c0$Core$Nil)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-right"), (c0$Core$Cons)((i1$Html$style)("width", "20%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($food.kCalPercent)), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$div)((c0$Core$Cons)((i1$Html$class)("text-right"), (c0$Core$Cons)((i1$Html$style)("width", "20%"), c0$Core$Nil)), (c0$Core$Cons)((i1$Html$text)((text_fromNumber)($food.proteinPercent)), c0$Core$Nil)), c0$Core$Nil))));
+    })))), c0$Core$Nil))));
 });
 
 const u0$Totals$viewDeleteAll = (($embed) => {
@@ -2366,7 +2449,7 @@ const u0$Totals$viewTarget = (($embed, $isExpanded, $index, $target) => {
 const u0$UI$buttonTarget = (($onClick) => {
   return (u0$UI$buttonRound)(({
     onClick: $onClick,
-    symbol: (i1$Html$div)((c0$Core$Cons)((i1$Html$style)("font-size", "11vw"), c0$Core$Nil), (c0$Core$Cons)((i1$Html$text)("t"), c0$Core$Nil)),
+    symbol: (i1$Html$img)((c0$Core$Cons)((i1$Html$style)("height", "12vw"), (c0$Core$Cons)((i1$Html$src)("images/target.svg"), c0$Core$Nil))),
   }));
 });
 
@@ -2424,12 +2507,18 @@ const u0$App$view = (($model) => {
           embed: u0$App$OnPickerMsg,
           onCancel: u0$App$OnPickerCancel,
           onEditFood: u0$App$OnEditFood,
+          onImportExport: u0$App$OnImportExport,
           onNewFood: u0$App$OnCreateNewFood,
         }), $model.foods, $subModel);
       }))()
       : ((($2)[0] === "$PageTotals")
         ? (u0$Totals$view)(u0$App$OnTotalsMsg, u0$App$OnClickOpenPicker, $model.totals)
-        : (sp_throw)('Missing pattern in try..as', 'src/App.sp 141:4', (sp_toHuman)($2)))));
+        : ((($2)[0] === "$PageImportExport")
+          ? ((() => {
+            const $subModel = ($2)[1];
+            return (u0$ImportExport$view)(u0$App$OnImportExportMsg, $subModel);
+          }))()
+          : (sp_throw)('Missing pattern in try..as', 'src/App.sp 145:4', (sp_toHuman)($2))))));
 });
 
 const u0$App$main = ({
