@@ -39,7 +39,7 @@
 .pb { padding-bottom: 1em; }
 .pl { padding-left: 1em; }
 .pr { padding-right: 1em; }
-.border { border: 1px solid #2aad09; border-radius: 2vw; }
+.border { border: 1px solid #2aad09; border-radius: 2vw; overflow: hidden; }
 
 .thirds > * {
   max-width: 90vw;
